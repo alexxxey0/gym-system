@@ -8,10 +8,7 @@
     <title>@yield('title', 'My Laravel App')</title>
     @vite('resources/css/app.css')
 </head>
-<body class='font-montserrat'>
-
-    <!-- Header -->
-    @include('partials.header')
+<body>
 
     <!-- Main Content -->
     <div class="container mx-auto">
