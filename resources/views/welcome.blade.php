@@ -1,17 +1,10 @@
 <!-- resources/views/dashboard.blade.php -->
 
-@extends('layouts.footer_only')
+@extends('layouts.welcome')
 
 @section('title', 'Laipni lūdzam Fitlife!')
 
 @section('content')
-    <style>
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-    </style>
     <h1 class='text-[#007BFF] text-center text-6xl py-8'>Laipni lūdzam FitLife!</h1>
     <form class='flex flex-col w-10/12 md:w-1/3 mx-auto shadow-md rounded-md p-4 border-2 border-[#C0C0C0]' action="{{ route('login_post') }}" method="POST">
         @csrf

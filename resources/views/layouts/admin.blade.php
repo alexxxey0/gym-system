@@ -6,12 +6,24 @@
     <title>@yield('title', 'My Laravel App')</title>
     <link rel="shortcut icon" href="{{ asset('images/fitlife_icon.png') }}" type="image/x-icon">
     @vite('resources/css/app.css')
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
 
-    <!-- Main Content -->
-    <div class="container mx-auto">
-        @yield('content')
+    <!-- Header -->
+    @include('partials.header')
+
+    <!-- Main Content and Navbar -->
+    <div class='flex flex-row h-full'>
+        @include('partials.admin_navbar')
+        <div class="container mx-auto">
+            @yield('content')
+        </div>
     </div>
 
     <!-- Footer -->
