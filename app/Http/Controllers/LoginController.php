@@ -10,20 +10,40 @@ class LoginController extends Controller {
     /**
      * Handle an authentication attempt.
      */
-    public function authenticate(Request $request): RedirectResponse {
-        $credentials = $request->validate([
-            'personal_id' => ['required',],
-            'password' => ['required'],
-        ]);
+    public function authenticate(Request $request) {
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+        $role = $request->role;
 
-            return redirect()->intended('dashboard');
+        if ($role === 'admin') {
+
+            $credentials = $request->validate([
+                'password' => ['required'],
+            ], [
+                'password.required' => 'Lūdzu, ievadiet paroli!'
+            ]);
+
+            //dd($credentials);
+
+            if (Auth::guard('admin')->attempt(['login' => 'admin1', 'password' => $credentials['password']])) {
+                $request->session()->regenerate();
+
+                return redirect()->route('admin_homepage');
+            }
+
+            return back()->withErrors([
+                'password' => 'Nepareiza parole!'
+            ])->with('role', $role);
+        } else {
+            $credentials = $request->validate([
+                'personal_id' => ['required',],
+                'password' => ['required'],
+            ], [
+                'personal_id.required' => 'Lūdzu, ievadiet personas kodu!',
+                'password.required' => 'Lūdzu, ievadiet paroli!'
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+        // Returning the role to the view so that we know which radio button to enable
+        return redirect()->route('home')->with('role', $role);
     }
 }

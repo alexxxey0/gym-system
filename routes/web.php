@@ -1,20 +1,31 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
+})->name('login');
+
+Route::post('/login', [LoginController::class, 'authenticate'])->name('login_post');
+
+// Admin routes
+Route::middleware(['auth:admin'])->group(function () {
+
+    Route::middleware(['admin'])->group(function () {
+        // Admin's homepage
+        Route::get('/admin_homepage', function () {
+            return view('admin.admin_homepage');
+        })->name('admin_homepage');
+
+        // Admin's logout
+        Route::post('/logout_admin', function () {
+            Auth::guard('admin')->logout();
+            return redirect()->route('login');
+        })->name('logout_admin');
+    });
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
+// require __DIR__ . '/auth.php';

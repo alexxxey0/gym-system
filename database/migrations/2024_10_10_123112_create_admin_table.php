@@ -12,7 +12,9 @@ return new class extends Migration {
         Schema::create('admin', function (Blueprint $table) {
             $table->id();
             $table->string('login', 30);
-            $table->string('password_hash', 256);
+            $table->string('password', 256);
+            $table->string('role', 30);
+            $table->timestamps();
         });
     }
 
