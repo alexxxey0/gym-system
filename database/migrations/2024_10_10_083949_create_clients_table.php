@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('password', 256);
             $table->string('phone', 20)->unique();
             $table->string('email', 50)->unique();
-            $table->string('membership_name', 30);
-            $table->date('membership_until');
+            $table->string('membership_name', 30)->nullable();
+            $table->date('membership_until')->nullable();
             $table->string('role', 30);
             $table->timestamps();
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,14 @@ Route::middleware(['auth:admin'])->group(function () {
         Route::get('/admin_homepage', function () {
             return view('admin.admin_homepage');
         })->name('admin_homepage');
+
+        // Register new client page
+        Route::get('/register_client', function () {
+            return view('admin.register_client');
+        })->name('register_client');
+
+        // Register new client (action)
+        Route::post('/register_client_post', [RegistrationController::class, 'register_client'])->name('register_client_post');
 
         // Admin's logout
         Route::post('/logout_admin', function () {

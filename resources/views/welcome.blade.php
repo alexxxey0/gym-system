@@ -10,7 +10,7 @@
         @csrf
         <div id='personal_id_field' class='flex flex-col'>
             <label for="personal-id">Personas kods</label>
-            <input class='border-2 border-gray-300 rounded-sm' type="text" name='personal_id' id='personal_id' placeholder="000000-00000">
+            <input class='border-2 border-gray-300 rounded-sm' type="text" name='personal_id' id='personal_id' placeholder="123456-12345">
         </div>
 
         <div id='personal_id_field' class='flex flex-col'>
