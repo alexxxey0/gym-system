@@ -29,6 +29,14 @@ Route::middleware(['auth:admin'])->group(function () {
         // Register new client (action)
         Route::post('/register_client_post', [RegistrationController::class, 'register_client'])->name('register_client_post');
 
+        // Register new coach page
+        Route::get('/register_coach', function () {
+            return view('admin.register_coach');
+        })->name('register_coach');
+
+        // Register new coach (action)
+        Route::post('/register_coach_post', [RegistrationController::class, 'register_coach'])->name('register_coach_post');
+
         // Admin's logout
         Route::post('/logout_admin', function () {
             Auth::guard('admin')->logout();

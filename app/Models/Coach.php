@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Coach extends Authenticatable
-{
+class Coach extends Authenticatable {
     protected $table = 'coaches';
+    protected $guarded = [];
     use HasFactory;
 }
