@@ -4,10 +4,6 @@
 
 @section('content')
     <style>
-        html, body {
-            height: 100%;
-        }
-
         .clients_list > div {
             border-bottom: 1px solid gray;
             padding-block: 1rem;
@@ -20,8 +16,10 @@
 
     <h1 class='font-bold text-center text-3xl my-8'>Visi klienti</h1>
 
+    <p class='w-10/12 mx-auto text-lg'>Šeit jūs varat apskatīt sarakstu ar visiem sporta zāles klientiem. Nospiediet uz klientu, lai atvērtu viņa profilu, kur ir iespējams apskatīt detalizētāku informāciju, kā arī veikt darbības, saistītas ar šo klientu (piemēram, rediģēt vai dzēst viņa informāciju, pagarināt abonementu utt.).</p>
+
     <!-- Table with all the clients -->
-    <div class='clients_list grid grid-cols-{{ count($displayed_attributes) }} mx-auto w-11/12 m-4 border-2 border-black rounded-md p-6'>
+    <div class='clients_list grid grid-cols-{{ count($displayed_attributes) }} mx-auto w-11/12 mt-4 mb-12 border-2 border-black rounded-md p-6'>
         @foreach($displayed_attributes as $attribute)
             <div>
                 <h1 class='font-bold text-center'>{{ $attribute }}</h1>
@@ -63,6 +61,7 @@
     
                 for (let j = 0; j < row_cells.length; j++) {
                     row_cells[j].classList.add('bg-gray-200');
+                    row_cells[j].classList.add('cursor-pointer');
                 }
     
             });
