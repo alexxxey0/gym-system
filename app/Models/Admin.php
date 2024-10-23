@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable {
     protected $table = 'admin';
+    protected $primaryKey = 'id';
     use HasFactory;
 
     public function username() {

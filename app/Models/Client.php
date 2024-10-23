@@ -9,5 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Client extends Authenticatable {
     protected $table = 'clients';
     protected $guarded = [];
+    protected $primaryKey = 'client_id';
     use HasFactory;
+
+    public function username() {
+        return 'personal_id';
+    }
 }

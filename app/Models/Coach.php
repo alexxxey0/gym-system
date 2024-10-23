@@ -9,5 +9,10 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class Coach extends Authenticatable {
     protected $table = 'coaches';
     protected $guarded = [];
+    protected $primaryKey = 'coach_id';
     use HasFactory;
+
+    public function username() {
+        return 'personal_id';
+    }
 }

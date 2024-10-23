@@ -7,7 +7,11 @@
     <nav class="container mx-auto">
         <ul class="flex flex-row items-center gap-x-4 text-xl">
             <li>
-                <a class='font-bold text-4xl' href="{{ route('admin_homepage') }}">FitLife</a>
+                @auth
+                    <a class='font-bold text-4xl' href="{{ route(Auth::user()->role . '_homepage') }}">FitLife</a>
+                @else
+                    <a class='font-bold text-4xl' href="{{ route('login') }}">FitLife</a>
+                @endauth
             </li>
 
             @auth
