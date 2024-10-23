@@ -44,6 +44,9 @@ Route::middleware(['auth:admin'])->group(function () {
     // View the list of all coaches
     Route::get('/coaches_list', [CoachController::class, 'list_coaches'])->name('coaches_list');
 
+    // View client's profile page
+    Route::get('/client/{client_id}', [ClientController::class, 'view_client_profile'])->name('view_client_profile');
+
     // Admin's logout
     Route::post('/logout_admin', function () {
         Auth::guard('admin')->logout();

@@ -12,6 +12,11 @@
         .coaches_list h1 {
             word-wrap: break-word;
         }
+
+        .coaches_list {
+            display: grid;
+            grid-template-columns: repeat({{ $attribute_count }}, 1fr);
+        }
     </style>
 
     <h1 class='font-bold text-center text-3xl my-8'>Visi treneri</h1>

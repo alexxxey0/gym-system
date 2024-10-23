@@ -12,6 +12,11 @@
         .clients_list h1 {
             word-wrap: break-word;
         }
+
+        .clients_list {
+            display: grid;
+            grid-template-columns: repeat({{ $attribute_count }}, 1fr);
+        }
     </style>
 
     <h1 class='font-bold text-center text-3xl my-8'>Visi klienti</h1>
@@ -27,25 +32,25 @@
         @endforeach
 
         @foreach($clients as $client)
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->personal_id }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->name }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->surname }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->phone }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->email }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->membership_name ?? 'Nav' }}</h1>
             </div>
-            <div class='client_cell' data-personal-id='{{ $client->personal_id }}'>
+            <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
                 <h1 class='text-center'>{{ $client->membership_until ?? 'Nav' }}</h1>
             </div>
         @endforeach
@@ -55,6 +60,7 @@
         const client_cells = document.querySelectorAll('.client_cell');
     
         for (let i = 0; i < client_cells.length; i++) {
+            // Add gray background and pointer cursor to the row when the user hovers over it
             client_cells[i].addEventListener('mouseover', function () {
                 const personal_id = this.dataset.personalId;
                 const row_cells = document.querySelectorAll('.client_cell[data-personal-id="' + personal_id + '"]');
@@ -65,9 +71,8 @@
                 }
     
             });
-        }
 
-        for (let i = 0; i < client_cells.length; i++) {
+            // Remove gray background from the row when the user stops hovering over it
             client_cells[i].addEventListener('mouseout', function () {
                 const personal_id = this.dataset.personalId;
                 const row_cells = document.querySelectorAll('.client_cell[data-personal-id="' + personal_id + '"]');
@@ -77,6 +82,15 @@
                 }
     
             });
+
+            // Open user's profile page when the user clicks on a row
+            client_cells[i].addEventListener('click', function () {
+                const client_id = this.dataset.id;
+                var url = "{{ route('view_client_profile', ['client_id' => ':client_id']) }}";
+                url = url.replace(':client_id', client_id);
+                window.location.href = url;
+            });
+
         }
     </script>
 @endsection

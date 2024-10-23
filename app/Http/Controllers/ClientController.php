@@ -6,8 +6,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ClientController extends Controller
-{
+class ClientController extends Controller {
     public function list_clients() {
         $clients = Client::all();
         $displayed_attributes = ['Personas kods', 'Vārds', 'Uzvārds', 'Telefona numurs', 'E-pasts', 'Abonementa veids', 'Abonements derīgs līdz:'];
@@ -16,6 +15,14 @@ class ClientController extends Controller
             'clients' => $clients,
             'displayed_attributes' => $displayed_attributes,
             'attribute_count' => count($displayed_attributes)
+        ]);
+    }
+
+    public function view_client_profile(Request $request) {
+        $client = Client::where('client_id', $request->client_id)->first();
+
+        return view('admin.client_profile', [
+            'client' => $client
         ]);
     }
 }
