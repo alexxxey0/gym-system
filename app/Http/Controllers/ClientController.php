@@ -14,7 +14,8 @@ class ClientController extends Controller
 
         return view('admin.clients_list', [
             'clients' => $clients,
-            'displayed_attributes' => $displayed_attributes
+            'displayed_attributes' => $displayed_attributes,
+            'attribute_count' => count($displayed_attributes)
         ]);
     }
 }

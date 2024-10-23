@@ -19,7 +19,7 @@
     <p class='w-10/12 mx-auto text-lg'>Šeit jūs varat apskatīt sarakstu ar visiem sporta zāles klientiem. Nospiediet uz klientu, lai atvērtu viņa profilu, kur ir iespējams apskatīt detalizētāku informāciju, kā arī veikt darbības, saistītas ar šo klientu (piemēram, rediģēt vai dzēst viņa informāciju, pagarināt abonementu utt.).</p>
 
     <!-- Table with all the clients -->
-    <div class='clients_list grid grid-cols-{{ count($displayed_attributes) }} mx-auto w-11/12 mt-4 mb-12 border-2 border-black rounded-md p-6'>
+    <div class='clients_list grid grid-cols-{{ $attribute_count }} mx-auto w-11/12 mt-4 mb-12 border-2 border-black rounded-md p-6'>
         @foreach($displayed_attributes as $attribute)
             <div>
                 <h1 class='font-bold text-center'>{{ $attribute }}</h1>
