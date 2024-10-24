@@ -43,7 +43,7 @@
                         <option value="surname">Uzvārds</option>
                         <option value="phone">Telefona numurs</option>
                         <option value="email">E-pasts</option>
-                        <option value="membershipType">Abonementa veids</option>
+                        <option value="membershipName">Abonementa veids</option>
                         <option value="membershipUntil">Abonementa derīgs līdz:</option>
                     </select>
                 </div>
@@ -63,25 +63,25 @@
 
             @foreach($clients as $client)
                 <div class='client_row contents' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}' data-name='{{ $client->name }}' data-surname='{{ $client->surname }}' data-phone='{{ $client->phone }}' data-email='{{ $client->email }}' data-membership-name='{{ $client->membership_name }}' data-membership-until='{{ $client->membership_until }}'>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->personal_id }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->name }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->surname }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->phone }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->email }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->membership_name ?? 'Nav' }}</h1>
                     </div>
-                    <div class='client_cell' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}'>
+                    <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->membership_until ?? 'Nav' }}</h1>
                     </div>
                 </div>
