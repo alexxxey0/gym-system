@@ -10,7 +10,8 @@ return new class extends Migration {
      */
     public function up(): void {
         Schema::create('memberships', function (Blueprint $table) {
-            $table->string('membership_name', 30)->primary();
+            $table->bigIncrements('membership_id');
+            $table->string('membership_name', 30)->unique();
             $table->decimal('price', 6, 2);
             $table->boolean('group_trainings_included');
             $table->time('entry_from_workdays')->default('08:00:00');
