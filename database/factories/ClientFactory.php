@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Client;
+use App\Models\Membership;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class ClientFactory extends Factory {
 
     public function definition(): array {
         $memberships = ['All-day', 'Daytime', 'Group training'];
+        $memberships_ids = Membership::pluck('membership_id')->toArray();
 
         return [
             'name' => $this->faker->firstName,
@@ -30,7 +32,7 @@ class ClientFactory extends Factory {
             'password' => bcrypt($this->faker->password),
             'phone' => $this->faker->unique()->phoneNumber,
             'email' => $this->faker->unique()->safeEmail,
-            'membership_name' => $this->faker->randomElement($memberships),
+            'membership_id' => $this->faker->randomElement($memberships_ids),
             'membership_until' => $this->faker->dateTimeBetween(now(), now()->addMonth()),
             'role' => 'client'
         ];

@@ -54,6 +54,39 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('email') }}</div>
         @endif
 
+        <div class='flex flex-row items-center gap-x-4'>
+            <label for="assign_membership">Uzreiz piešķirt klientam abonementu</label>
+            <input type="checkbox" name="assign_membership" id="assign_membership">
+        </div>
+
+        <div class='hidden flex-col membership_selection'>
+            <label for="membership">Abonements</label>
+            <select name="membership_name" id="membership_name" class='rounded-md'>
+                @foreach ($memberships as $membership)
+                    <option value="{{ $membership }}">{{ $membership }}</option>
+                @endforeach
+            </select>
+            <p class='mt-2'>Abonements tiks piešķirts uz vienu mēnesi</p>
+        </div>
+
         <button type="submit" class='bg-[#007BFF] active:bg-[#0056b3] w-fit mx-auto py-2 px-6 text-white rounded-md text-xl font-bold'>Reģistrēt</button>
     </form>
+
+    <script>
+        const assign_membership_checkbox = document.querySelector('#assign_membership');
+        const membership_selection = document.querySelector('.membership_selection');
+        const membership_name = document.querySelector('#membership_name');
+
+        assign_membership_checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                membership_selection.classList.remove('hidden');
+                membership_selection.classList.add('flex');
+                membership_name.required = true;
+            } else {
+                membership_selection.classList.remove('flex');
+                membership_selection.classList.add('hidden');
+                membership_name.required = false;
+            }
+        });
+    </script>
 @endsection

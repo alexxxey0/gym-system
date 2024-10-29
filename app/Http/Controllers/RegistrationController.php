@@ -7,10 +7,22 @@ use App\Models\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Membership;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class RegistrationController extends Controller {
+
+    // Show the page with the client registration form
+    public function view_register_client_form(Request $request) {
+
+        // Get the list of memberships' names
+        $memberships = Membership::pluck('membership_name')->toArray();
+
+        return view('admin.register_client', [
+            'memberships' => $memberships
+        ]);
+    }
 
     // Register a new client
     public function register_client(Request $request) {
@@ -48,6 +60,16 @@ class RegistrationController extends Controller {
 
         $temporary_password = Str::random(10);
 
+        if (isset($request->assign_membership)) {
+            // Get the selected membership's ID
+            $membership_name = $request->membership_name;
+            $membership_id = Membership::select('membership_id')->where('membership_name', $membership_name)->value('membership_id');
+            $date_month_from_now = now()->addMonth()->format('Y-m-d');
+        } else {
+            $membership_id = null;
+            $date_month_from_now = null;
+        }
+
         $client = Client::create([
             'name' => $form_data['name'],
             'surname' => $form_data['surname'],
@@ -55,11 +77,13 @@ class RegistrationController extends Controller {
             'password' => Hash::make($temporary_password),
             'phone' => $form_data['phone'],
             'email' => $form_data['email'],
-            'role' => 'client'
+            'role' => 'client',
+            'membership_id' => $membership_id,
+            'membership_until' => $date_month_from_now
         ]);
 
         // Send the temporary password to the user's email
-        Mail::send('emails.client.welcome', ['name' => $client->name, 'surname' => $client->surname, 'personal_id' => $client->personal_id, 'temporary_password' => $temporary_password], function ($message) use ($client) {
+        Mail::send('emails.client.welcome', ['name' => $client->name, 'surname' => $client->surname, 'personal_id' => $client->personal_id, 'temporary_password' => $temporary_password, 'membership_name' => $membership_name ?? null, 'membership_until' => $client->membership_until ?? null], function ($message) use ($client) {
             $message->to($client->email);
             $message->subject('Esiet sveicināti FitLife!');
         });

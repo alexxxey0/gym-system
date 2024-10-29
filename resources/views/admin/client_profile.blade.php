@@ -40,11 +40,11 @@
         </div>
         <div>
             <h2 class="font-bold">Abonementa veids</h2>
-            <h2>{{ $client->membership_name }}</h2>
+            <h2>{{ $client->membership_name ?? 'Nav' }}</h2>
         </div>
         <div>
             <h2 class="font-bold">Abonements derīgs līdz:</h2>
-            <h2>{{ $client->membership_until }}</h2>
+            <h2>{{ $client->membership_until ?? 'Nav' }}</h2>
         </div>
         <div>
             <h2 class="font-bold">Klienta reģistrēšanas datums</h2>

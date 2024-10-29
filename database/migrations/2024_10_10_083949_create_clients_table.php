@@ -17,12 +17,12 @@ return new class extends Migration {
             $table->string('password', 256);
             $table->string('phone', 20)->unique();
             $table->string('email', 50)->unique();
-            $table->string('membership_name', 30)->nullable();
+            $table->unsignedBigInteger('membership_id')->nullable();
             $table->date('membership_until')->nullable();
             $table->string('role', 30);
             $table->timestamps();
 
-            $table->foreign('membership_name')->references('membership_name')->on('memberships');
+            $table->foreign('membership_id')->references('membership_id')->on('memberships');
         });
     }
 

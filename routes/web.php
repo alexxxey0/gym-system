@@ -23,9 +23,7 @@ Route::middleware(['auth:admin'])->group(function () {
     })->name('admin_homepage');
 
     // Register new client page
-    Route::get('/register_client', function () {
-        return view('admin.register_client');
-    })->name('register_client');
+    Route::get('/register_client', [RegistrationController::class, 'view_register_client_form'])->name('register_client');
 
     // Register new client (action)
     Route::post('/register_client_post', [RegistrationController::class, 'register_client'])->name('register_client_post');
