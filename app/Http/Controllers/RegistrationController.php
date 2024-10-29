@@ -16,11 +16,18 @@ class RegistrationController extends Controller {
     // Show the page with the client registration form
     public function view_register_client_form(Request $request) {
 
-        // Get the list of memberships' names
-        $memberships = Membership::pluck('membership_name')->toArray();
+        $memberships = Membership::all();
+
+        // Array that matches every membership with its price (needed for updating membership price in JS)
+        $memberships_prices = array();
+
+        foreach ($memberships as $membership) {
+            $memberships_prices[$membership->membership_name] = $membership->price;
+        }
 
         return view('admin.register_client', [
-            'memberships' => $memberships
+            'memberships' => $memberships,
+            'memberships_prices' => json_encode($memberships_prices)
         ]);
     }
 

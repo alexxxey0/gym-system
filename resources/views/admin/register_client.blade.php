@@ -59,14 +59,28 @@
             <input type="checkbox" name="assign_membership" id="assign_membership">
         </div>
 
-        <div class='hidden flex-col membership_selection'>
-            <label for="membership">Abonements</label>
-            <select name="membership_name" id="membership_name" class='rounded-md'>
-                @foreach ($memberships as $membership)
-                    <option value="{{ $membership }}">{{ $membership }}</option>
-                @endforeach
-            </select>
-            <p class='mt-2'>Abonements tiks piešķirts uz vienu mēnesi</p>
+        <div class='hidden flex-col membership_selection gap-y-8'>
+            <div class='rounded-md border-2 border-gray-300 p-4 flex flex-col gap-y-2'>
+                <label for="membership">Abonements</label>
+                <select name="membership_name" id="membership_name" class='rounded-md'>
+                    @foreach ($memberships as $membership)
+                        <option value="{{ $membership->membership_name }}">{{ $membership->membership_name }}</option>
+                    @endforeach
+                </select>
+                <p class='mt-2'>Abonements tiks piešķirts uz vienu mēnesi</p>
+            </div>
+
+            <div class='rounded-md border-2 border-gray-300 p-4 flex flex-col gap-y-2'>
+                <p>Maksājuma summa: <span id='membership_price' class='font-bold'></span> €</p>
+
+                <label for="payment_method">Maksājuma veids</label>
+                <select name="payment_method" id="payment_method" class='rounded-md'>
+                    <option value="cash">Skaidra nauda</option>
+                    <option value="card">Bankas karte</option>
+                </select>
+            </div>
+
+            
         </div>
 
         <button type="submit" class='bg-[#007BFF] active:bg-[#0056b3] w-fit mx-auto py-2 px-6 text-white rounded-md text-xl font-bold'>Reģistrēt</button>
@@ -76,17 +90,33 @@
         const assign_membership_checkbox = document.querySelector('#assign_membership');
         const membership_selection = document.querySelector('.membership_selection');
         const membership_name = document.querySelector('#membership_name');
+        const payment_method_selection = document.querySelector('#payment_method');
 
         assign_membership_checkbox.addEventListener('change', function() {
             if (this.checked) {
                 membership_selection.classList.remove('hidden');
                 membership_selection.classList.add('flex');
                 membership_name.required = true;
+                payment_method_selection.required = true;
             } else {
                 membership_selection.classList.remove('flex');
                 membership_selection.classList.add('hidden');
                 membership_name.required = false;
+                payment_method_selection.required = false;
             }
+        });
+
+        const membership_price = document.querySelector('#membership_price');
+        const memberships_prices = {!! $memberships_prices !!};
+        
+        // Initial displaying of the membership's price
+        const selected_membership = membership_name.value;
+        membership_price.textContent = memberships_prices[selected_membership];
+
+        membership_name.addEventListener('change', function() {
+            // Updating selected membership's price
+            const selected_membership = this.value;
+            membership_price.textContent = memberships_prices[selected_membership];
         });
     </script>
 @endsection
