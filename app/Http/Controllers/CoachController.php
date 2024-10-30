@@ -18,4 +18,12 @@ class CoachController extends Controller
             'attribute_count' => count($displayed_attributes)
         ]);
     }
+
+    public function view_coach_profile(Request $request) {
+        $coach = Coach::where('coach_id', $request->coach_id)->first();
+
+        return view('admin.coach_profile', [
+            'coach' => $coach
+        ]);
+    }
 }
