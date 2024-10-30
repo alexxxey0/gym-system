@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 
+// This controller is responsible for user authentication.
 class LoginController extends Controller {
     /**
      * Handle an authentication attempt.

@@ -5,6 +5,7 @@ use App\Http\Controllers\CoachController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,8 +15,15 @@ Route::get('/', function () {
 
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login_post');
 
-// Route for authenticated users
-Route::middleware(['auth_any'])->group(function () {
+// Routes for clients and coaches
+Route::middleware(['auth:client,coach'])->group(function () {
+
+    // Change password page
+    Route::get('/change_password', [UserController::class, 'change_password_page'])->name('change_password_page');
+
+    // User's own profile page
+    Route::get('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
+
 });
 
 // Admin routes
@@ -67,9 +75,6 @@ Route::middleware(['auth:client'])->group(function () {
     Route::get('/client_homepage', function () {
         return view('client.client_homepage');
     })->name('client_homepage');
-
-    // Client's profile (client's view)
-    Route::get('/my_profile_client', [ClientController::class, 'view_client_profile_as_client'])->name('view_client_profile_as_client');
 
     // Client's logout
     Route::post('/logout_client', function () {
