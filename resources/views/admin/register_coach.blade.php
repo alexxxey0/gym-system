@@ -7,7 +7,7 @@
 
     <!-- New coach registration form -->
 
-    <form action="{{ route('register_coach_post') }}" method='POST' class='w-1/3 mx-auto flex flex-col gap-y-6 mt-6 mb-16'>
+    <form action="{{ route('register_coach_post') }}" method='POST' class='w-1/3 mx-auto flex flex-col gap-y-6 mt-6 mb-16' onsubmit="return show_registration_confirmation(this);">
         @csrf
         <div class='flex flex-col'>
             <label for="name">Vārds</label>
@@ -56,4 +56,23 @@
 
         <button type="submit" class='bg-[#007BFF] active:bg-[#0056b3] w-fit mx-auto py-2 px-6 text-white rounded-md text-xl font-bold'>Reģistrēt</button>
     </form>
+
+    
+    <script>
+        function show_registration_confirmation(form) {
+            var form_data = new FormData(form);
+            var confirm_message = `
+Jūs gribat reģistrēt jaunu treneri ar datiem:
+Vārds: ${form_data.get('name')}
+Uzvārds: ${form_data.get('surname')}
+Personas kods: ${form_data.get('personal_id')}
+Telefona numurs: ${form_data.get('phone')}
+E-pasts: ${form_data.get('email')}
+
+Nospiežot "Apstiprināt", jūs apstiprināt, ka trenera dati ir patiesi.`;
+
+            return confirm(confirm_message);
+        }
+    </script>
+
 @endsection
