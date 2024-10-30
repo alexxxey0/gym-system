@@ -16,7 +16,9 @@ return new class extends Migration {
             $table->string('payment_purpose', 30);
             $table->unsignedBigInteger('membership_id');
             $table->string('payment_status', 30);
+            $table->decimal('amount', 6, 2);
             $table->timestamps();
+            $table->dateTime('completed_at')->nullable();
 
             $table->foreign('membership_id')->references('membership_id')->on('memberships');
             $table->foreign('client_id')->references('client_id')->on('clients');

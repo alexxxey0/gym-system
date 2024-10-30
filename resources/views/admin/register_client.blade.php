@@ -7,7 +7,7 @@
 
     <!-- New client registration form -->
 
-    <form action="{{ route('register_client_post') }}" method='POST' class='w-1/3 mx-auto flex flex-col gap-y-6 mt-6 mb-16'>
+    <form action="{{ route('register_client_post') }}" method='POST' class='w-1/3 mx-auto flex flex-col gap-y-6 mt-6 mb-16' onsubmit="return show_registration_confirmation(this);">
         @csrf
         <div class='flex flex-col'>
             <label for="name">Vārds</label>
@@ -72,6 +72,7 @@
 
             <div class='rounded-md border-2 border-gray-300 p-4 flex flex-col gap-y-2'>
                 <p>Maksājuma summa: <span id='membership_price' class='font-bold'></span> €</p>
+                <input type="hidden" name="amount" id='amount'>
 
                 <label for="payment_method">Maksājuma veids</label>
                 <select name="payment_method" id="payment_method" class='rounded-md'>
@@ -118,5 +119,45 @@
             const selected_membership = this.value;
             membership_price.textContent = memberships_prices[selected_membership];
         });
+
+        function show_registration_confirmation(form) {
+            var form_data = new FormData(form);
+
+            if (!assign_membership_checkbox.checked) {
+                var confirm_message = `
+Jūs gribat reģistrēt jaunu klientu ar datiem:
+Vārds: ${form_data.get('name')}
+Uzvārds: ${form_data.get('surname')}
+Personas kods: ${form_data.get('personal_id')}
+Telefona numurs: ${form_data.get('phone')}
+E-pasts: ${form_data.get('email')}
+
+Nospiežot "Apstiprināt", jūs apstiprināt, ka klienta dati ir patiesi.`;
+
+                return confirm(confirm_message);
+            } else {
+                const payment_options_names = {'card': 'Bankas karte', 'cash': 'Skaidra nauda'};
+
+                const amount_input = document.querySelector('#amount');
+                amount_input.value = membership_price.textContent;
+
+                var confirm_message = `
+Jūs gribat reģistrēt jaunu klientu ar datiem:
+Vārds: ${form_data.get('name')}
+Uzvārds: ${form_data.get('surname')}
+Personas kods: ${form_data.get('personal_id')}
+Telefona numurs: ${form_data.get('phone')}
+E-pasts: ${form_data.get('email')}
+
+Klientam tiks piešķirts abonements: ${form_data.get('membership_name')}
+Maksājuma summa: ${membership_price.textContent} €
+Maksājuma veids: ${payment_options_names[form_data.get('payment_method')]}
+
+
+Nospiežot "Apstiprināt", jūs apstiprināt, ka klienta dati ir patiesi un klients ir veicis maksājumu.`;
+
+                return confirm(confirm_message);
+            }
+        }
     </script>
 @endsection

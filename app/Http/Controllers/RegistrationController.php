@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coach;
 use App\Models\Client;
+use App\Models\Payment;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -94,6 +95,19 @@ class RegistrationController extends Controller {
             $message->to($client->email);
             $message->subject('Esiet sveicināti FitLife!');
         });
+
+        // Save the payment data if the user is assigned a membership on registration
+        if (isset($request->assign_membership)) {
+            Payment::create([
+                'client_id' => $client->client_id,
+                'payment_method' => $request->payment_method,
+                'payment_purpose' => 'Buying membership',
+                'membership_id' => $client->membership_id,
+                'payment_status' => 'COMPLETED',
+                'amount' => floatval($request->amount),
+                'completed_at' => now()
+            ]);
+        }
 
         return redirect()->back()->with('message', 'Klients veiksmīgi reģistrēts!');
     }
