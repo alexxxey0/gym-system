@@ -14,6 +14,10 @@ Route::get('/', function () {
 
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login_post');
 
+// Route for authenticated users
+Route::middleware(['auth_any'])->group(function () {
+});
+
 // Admin routes
 Route::middleware(['auth:admin'])->group(function () {
 
@@ -42,7 +46,7 @@ Route::middleware(['auth:admin'])->group(function () {
     // View the list of all coaches
     Route::get('/coaches_list', [CoachController::class, 'list_coaches'])->name('coaches_list');
 
-    // View client's profile page
+    // View client's profile page (admin's view)
     Route::get('/client/{client_id}', [ClientController::class, 'view_client_profile'])->name('view_client_profile');
 
     // View coach's profile page
@@ -64,10 +68,8 @@ Route::middleware(['auth:client'])->group(function () {
         return view('client.client_homepage');
     })->name('client_homepage');
 
-    // Client's profile
-    Route::get('/client_profile', function () {
-        return view('client.client_profile');
-    })->name('client_profile');
+    // Client's profile (client's view)
+    Route::get('/my_profile_client', [ClientController::class, 'view_client_profile_as_client'])->name('view_client_profile_as_client');
 
     // Client's logout
     Route::post('/logout_client', function () {

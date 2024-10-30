@@ -6,6 +6,7 @@ use App\Models\Client;
 use App\Models\Membership;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller {
 
@@ -36,6 +37,18 @@ class ClientController extends Controller {
         $client['membership_name'] = $membership_name;
 
         return view('admin.client_profile', [
+            'client' => $client
+        ]);
+    }
+
+    public function view_client_profile_as_client(Request $request) {
+        $client = Auth::user();
+
+        $membership_id = $client->membership_id;
+        $membership_name = Membership::select('membership_name')->where('membership_id', $membership_id)->value('membership_name');
+        $client['membership_name'] = $membership_name;
+
+        return view('client.client_profile', [
             'client' => $client
         ]);
     }
