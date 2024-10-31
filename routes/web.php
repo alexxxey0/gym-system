@@ -21,6 +21,9 @@ Route::middleware(['auth:client,coach'])->group(function () {
     // Change password page
     Route::get('/change_password', [UserController::class, 'change_password_page'])->name('change_password_page');
 
+    // Change password action
+    Route::post('/change_password', [UserController::class, 'change_password'])->name('change_password');
+
     // User's own profile page
     Route::get('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
 
