@@ -60,8 +60,8 @@
     
     <script>
         function show_registration_confirmation(form) {
-            var form_data = new FormData(form);
-            var confirm_message = `
+            let form_data = new FormData(form);
+            let confirm_message = `
 Jūs gribat reģistrēt jaunu treneri ar datiem:
 Vārds: ${form_data.get('name')}
 Uzvārds: ${form_data.get('surname')}

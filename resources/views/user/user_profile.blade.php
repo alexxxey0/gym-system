@@ -55,7 +55,7 @@
         </div>
 
         @if ($user->role === 'coach')
-            <h1 class='font-bold text-center text-2xl mt-8'>Mana publiskā profila dati</h1>
+            <h1 class='font-bold text-center text-2xl mt-16'>Mana publiskā profila dati</h1>
 
             <div class='coach_info flex flex-col my-16 text-lg w-fit gap-y-4 mx-auto'>
                 <div>
@@ -73,12 +73,16 @@
             </div>
         @endif
 
-        <div class='flex flex-col'>
-            <a href="{{ route('change_password_page') }}" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white py-2 w-1/2 md:w-1/6 mx-auto rounded-md text-center text-xl'>Mainīt paroli</a>
+        <div class='flex flex-col w-1/3 mx-auto'>
+            <a href="{{ route('change_password_page') }}" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Mainīt paroli</a>
+
+            @if (Auth::user()->role === 'coach')
+                <a href="{{ route('edit_public_profile_coach_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt mana publiskā profila datus</a>
+            @endif
         </div>
+
     </div>
 
     <script>
-        
     </script>
 @endsection

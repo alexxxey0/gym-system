@@ -11,7 +11,7 @@
         }
     </style>
 
-    <h1 class='font-bold text-center text-2xl mt-8'>Trenera personīgi dati</h1>
+    <h1 class='font-bold text-center text-2xl mt-8'>Trenera personīgie dati</h1>
 
     <div class='coach_info flex flex-col my-16 text-lg w-fit gap-y-4 mx-auto'>
         <div>
@@ -62,6 +62,12 @@
         <div>
             <h2 class="font-bold">Trenera kontakte-pasts</h2>
             <h2>{{ $coach->contact_email ?? 'Nav' }}</h2>
+        </div>
+
+        <div class='flex flex-col gap-y-8 mt-12 w-1/2 mx-auto'>
+            <a href="{{ route('edit_coach_profile_page', ['coach_id' => $coach->coach_id]) }}" class='bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt trenera personīgos datus</a>
+
+            <a href="{{ route('edit_public_profile_admin_page', ['coach_id' => $coach->coach_id]) }}" class='bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt trenera publiskā profila datus</a>
         </div>
     </div>
 @endsection

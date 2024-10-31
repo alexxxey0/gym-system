@@ -119,7 +119,7 @@
             // Open user's profile page when the user clicks on a row
             client_rows[i].addEventListener('click', function () {
                 const client_id = this.dataset.id;
-                var url = "{{ route('view_client_profile', ['client_id' => ':client_id']) }}";
+                let url = "{{ route('view_client_profile', ['client_id' => ':client_id']) }}";
                 url = url.replace(':client_id', client_id);
                 window.location.href = url;
             });

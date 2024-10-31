@@ -26,7 +26,6 @@ Route::middleware(['auth:client,coach'])->group(function () {
 
     // User's own profile page
     Route::get('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
-
 });
 
 // Admin routes
@@ -62,6 +61,24 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // View coach's profile page
     Route::get('/coach/{coach_id}', [CoachController::class, 'view_coach_profile'])->name('view_coach_profile');
+
+    // Client profile editing page
+    Route::get('/client/{client_id}/edit', [ClientController::class, 'edit_profile_page'])->name('edit_client_profile_page');
+
+    // Edit client's profile (action)
+    Route::post('/client/edit', [ClientController::class, 'edit_profile'])->name('edit_client_profile');
+
+    // Coach profile editing page
+    Route::get('/coach/{coach_id}/edit', [CoachController::class, 'edit_profile_page'])->name('edit_coach_profile_page');
+
+    // Edit coach's profile (action)
+    Route::post('/coach/edit', [CoachController::class, 'edit_profile'])->name('edit_coach_profile');
+
+    // Edit coach's public profile page (admin's view)
+    Route::get('/coach/{coach_id}/edit_public_profile', [CoachController::class, 'edit_public_profile_page'])->name('edit_public_profile_admin_page');
+
+    // Edit coach's public profile (action)
+    Route::post('/coach/edit_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_admin');
 
     // Admin's logout
     Route::post('/logout_admin', function () {
@@ -99,6 +116,12 @@ Route::middleware(['auth:coach'])->group(function () {
     Route::get('/coach_profile', function () {
         return view('coach.coach_profile');
     })->name('coach_profile');
+
+    // Edit coach's public profile page (coach's view)
+    Route::get('/edit_my_public_profile', [UserController::class, 'edit_public_profile_page'])->name('edit_public_profile_coach_page');
+
+    // Edit coach's public profile (action)
+    Route::post('/edit_my_public_profile', [UserController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
 
     // Coach's logout
     Route::post('/logout_coach', function () {

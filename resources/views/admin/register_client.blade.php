@@ -121,10 +121,10 @@
         });
 
         function show_registration_confirmation(form) {
-            var form_data = new FormData(form);
+            let form_data = new FormData(form);
 
             if (!assign_membership_checkbox.checked) {
-                var confirm_message = `
+                let confirm_message = `
 Jūs gribat reģistrēt jaunu klientu ar datiem:
 Vārds: ${form_data.get('name')}
 Uzvārds: ${form_data.get('surname')}
@@ -141,7 +141,7 @@ Nospiežot "Apstiprināt", jūs apstiprināt, ka klienta dati ir patiesi.`;
                 const amount_input = document.querySelector('#amount');
                 amount_input.value = membership_price.textContent;
 
-                var confirm_message = `
+                let confirm_message = `
 Jūs gribat reģistrēt jaunu klientu ar datiem:
 Vārds: ${form_data.get('name')}
 Uzvārds: ${form_data.get('surname')}

@@ -54,5 +54,7 @@
             <h2 class="font-bold">Klienta datu pēdējās rediģēšanas datums</h2>
             <h2>{{ $client->updated_at }}</h2>
         </div>
+
+        <a href="{{ route('edit_client_profile_page', ['client_id' => $client->client_id]) }}" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 mx-auto rounded-md text-center text-xl'>Rediģēt klienta datus</a>
     </div>
 @endsection
