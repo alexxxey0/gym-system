@@ -18,7 +18,7 @@
     <h1 class='font-bold text-center text-2xl mt-8'>Mana publiskā profila datu rediģēšana</h1>
 
     <div class='my-16'>
-        <form class='coach_info flex flex-col text-lg w-fit gap-y-4 mx-auto' action="{{ route('edit_public_profile_coach') }}" method="POST">
+        <form class='coach_info flex flex-col text-lg w-fit gap-y-4 mx-auto' action="{{ route('edit_public_profile_coach') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div>
                 <label for="personal_description">Personiskais apraksts</label>
@@ -42,6 +42,13 @@
             </div>
             @if ($errors->has('contact_email'))
                 <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('contact_email') }}</div>
+            @endif
+
+            <label for="profile_picture">Profila attēls</label>
+            <input type="file" name="profile_picture" id="profile_picture" accept='image/*'>
+
+            @if ($errors->has('profile_picture'))
+                <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('profile_picture') }}</div>
             @endif
 
             <button type="submit" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 mx-auto rounded-md text-center text-xl'>Saglabāt izmaiņas</button>

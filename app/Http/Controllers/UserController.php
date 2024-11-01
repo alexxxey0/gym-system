@@ -68,28 +68,4 @@ class UserController extends Controller {
 
         return view('user.edit_public_profile');
     }
-
-    public function edit_public_profile(Request $request) {
-        $coach = Coach::where('coach_id', Auth::user()->coach_id)->first();
-
-        $messages = [
-            'personal_description.max' => 'Personiskais apraksts nevar būt garāk par 2000 simboliem!',
-            'contact_phone.max' => 'Kontakttelefons nevar būt garāks par 20 simboliem!',
-            'contact_email.max' => 'Kontakte-pasts nevar būt garāks par 50 simboliem!'
-        ];
-
-        $form_data = $request->validate([
-            'personal_description' => ['max:2000'],
-            'contact_phone' => ['max:20'],
-            'contact_email' => ['max:50']
-        ], $messages);
-
-        $coach->update([
-            'personal_description' => $form_data['personal_description'],
-            'contact_phone' => $form_data['contact_phone'],
-            'contact_email' => $form_data['contact_email']
-        ]);
-
-        return redirect()->back()->with('message', 'Publiskā profila dati veiksmīgi atjaunoti!');
-    }
 }

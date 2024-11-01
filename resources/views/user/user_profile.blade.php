@@ -7,13 +7,12 @@
         .user_info > div {
             display: flex;
             flex-direction: column;
-            
         }
     </style>
 
-    <h1 class='font-bold text-center text-2xl mt-8'>Mans profils</h1>
-    <div class='my-16'>
+    <div class='my-12'>
         <div class='user_info flex flex-col text-lg w-fit gap-y-4 mx-auto'>
+            <h1 class='font-bold text-center text-2xl mt-8'>Mans profils</h1>
             <div>
                 <h2 class='font-bold'>{{ $user->role === 'client' ? 'Mans klienta ID' : 'Mans trenera ID' }}</h2>
                 <h2>{{ $user->role === 'client' ? $user->client_id : $user->coach_id }}</h2>
@@ -52,12 +51,11 @@
                 <h2 class="font-bold">Mans reģistrēšanas datums</h2>
                 <h2>{{ $user->created_at }}</h2>
             </div>
-        </div>
+        
 
-        @if ($user->role === 'coach')
-            <h1 class='font-bold text-center text-2xl mt-16'>Mana publiskā profila dati</h1>
+            @if ($user->role === 'coach')
+                <h1 class='font-bold text-center text-2xl mt-16'>Mana publiskā profila dati</h1>
 
-            <div class='coach_info flex flex-col my-16 text-lg w-fit gap-y-4 mx-auto'>
                 <div>
                     <h2 class="font-bold">Mans apraksts</h2>
                     <h2>{{ $user->personal_description ?? 'Nav' }}</h2>
@@ -70,8 +68,16 @@
                     <h2 class="font-bold">Mans kontakte-pasts</h2>
                     <h2>{{ $user->contact_email ?? 'Nav' }}</h2>
                 </div>
-            </div>
-        @endif
+                <div>
+                    <h2 class='font-bold'>Mans profila attēls</h2>
+                    @if (isset(Auth::user()->path_to_image))
+                        <img class='mt-4 max-w-xs border-8 border-black rounded-md' src="{{ asset('storage/' . Auth::user()->path_to_image) }}" alt="Mans profila attēls">
+                    @else
+                        <h2>Nav</h2>
+                    @endif
+                </div>
+            @endif
+        </div>
 
         <div class='flex flex-col w-1/3 mx-auto'>
             <a href="{{ route('change_password_page') }}" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Mainīt paroli</a>

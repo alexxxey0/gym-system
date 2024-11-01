@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coach;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
 // This controller is responsible for coach-related actions that are avaiable to the administrator. It allows him to view coaches' data, modify it etc.
@@ -89,24 +90,40 @@ class CoachController extends Controller {
     }
 
     public function edit_public_profile(Request $request) {
-        $coach = Coach::where('coach_id', $request->coach_id)->first();
+        if (isset(Auth::user()->coach_id)) {
+            $coach_id = Auth::user()->coach_id;
+        } else {
+            $coach_id = $request->coach_id;
+        }
+
+        $coach = Coach::where('coach_id', $coach_id)->first();
 
         $messages = [
             'personal_description.max' => 'Personiskais apraksts nevar būt garāk par 2000 simboliem!',
             'contact_phone.max' => 'Kontakttelefons nevar būt garāks par 20 simboliem!',
-            'contact_email.max' => 'Kontakte-pasts nevar būt garāks par 50 simboliem!'
+            'contact_email.max' => 'Kontakte-pasts nevar būt garāks par 50 simboliem!',
+            'profile_picture.image' => 'Augšupielādētajam failam ir jābūt attēlam!',
+            'profile_picture.max' => 'Faila izmērs nedrīkst pārsniegt 5MB!'
         ];
 
         $form_data = $request->validate([
             'personal_description' => ['max:2000'],
             'contact_phone' => ['max:20'],
-            'contact_email' => ['max:50']
+            'contact_email' => ['max:50'],
+            'profile_picture' => ['image', 'max:5000']
         ], $messages);
+
+        // Save the profile picture to the server
+        if (isset($request['profile_picture'])) {
+            $profile_picture = $request->file('profile_picture');
+            $path = $profile_picture->store('coaches_profile_pictures', 'public');
+        }
 
         $coach->update([
             'personal_description' => $form_data['personal_description'],
             'contact_phone' => $form_data['contact_phone'],
-            'contact_email' => $form_data['contact_email']
+            'contact_email' => $form_data['contact_email'],
+            'path_to_image' => $path ?? $coach->path_to_image
         ]);
 
         return redirect()->back()->with('message', 'Publiskā profila dati veiksmīgi atjaunoti!');

@@ -116,7 +116,7 @@ Route::middleware(['auth:coach'])->group(function () {
     Route::get('/edit_my_public_profile', [UserController::class, 'edit_public_profile_page'])->name('edit_public_profile_coach_page');
 
     // Edit coach's public profile (action)
-    Route::post('/edit_my_public_profile', [UserController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
+    Route::post('/edit_my_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
 
     // Coach's logout
     Route::post('/logout_coach', function () {
