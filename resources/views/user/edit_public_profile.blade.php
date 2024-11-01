@@ -11,6 +11,10 @@
         }
     </style>
 
+    <div class='ml-8 mt-12'>
+        <x-secondary_link class='' href="{{ route('user_profile_page') }}">← Atpakaļ uz manu profilu</x-secondary_link>
+    </div>
+
     <h1 class='font-bold text-center text-2xl mt-8'>Mana publiskā profila datu rediģēšana</h1>
 
     <div class='my-16'>

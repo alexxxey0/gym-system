@@ -10,8 +10,11 @@
             
         }
     </style>
-
-    <h1 class='font-bold text-center text-2xl mt-8'>Klienta datu rediģēšana</h1>
+    
+    <div class='ml-8 mt-12'>
+        <x-secondary_link class='' href="{{ route('view_client_profile', ['client_id' => $client->client_id]) }}">← Atpakaļ uz klienta profilu</x-secondary_link>
+    </div>
+    <h1 class='font-bold text-center text-2xl'>Klienta datu rediģēšana</h1>
 
     <form action="{{ route('edit_client_profile') }}" method="POST" class='client_info flex flex-col my-16 text-lg w-1/3 gap-y-4 mx-auto'>
         @csrf

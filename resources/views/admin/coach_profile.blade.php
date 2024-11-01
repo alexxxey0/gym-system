@@ -64,10 +64,9 @@
             <h2>{{ $coach->contact_email ?? 'Nav' }}</h2>
         </div>
 
-        <div class='flex flex-col gap-y-8 mt-12 w-1/2 mx-auto'>
-            <a href="{{ route('edit_coach_profile_page', ['coach_id' => $coach->coach_id]) }}" class='bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt trenera personīgos datus</a>
-
-            <a href="{{ route('edit_public_profile_admin_page', ['coach_id' => $coach->coach_id]) }}" class='bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt trenera publiskā profila datus</a>
+        <div class='flex flex-col gap-y-8 mt-12 w-8/12 mx-auto'>
+            <x-main_link href="{{ route('edit_coach_profile_page', ['coach_id' => $coach->coach_id]) }}" class='text-xl'>Rediģēt trenera personīgos datus</x-main_link>
+            <x-main_link href="{{ route('edit_public_profile_admin_page', ['coach_id' => $coach->coach_id]) }}" class='text-xl'>Rediģēt trenera publiskā profila datus</x-main_link>
         </div>
     </div>
 @endsection

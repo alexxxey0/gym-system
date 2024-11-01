@@ -112,11 +112,6 @@ Route::middleware(['auth:coach'])->group(function () {
         return view('coach.coach_homepage');
     })->name('coach_homepage');
 
-    // Coach's profile
-    Route::get('/coach_profile', function () {
-        return view('coach.coach_profile');
-    })->name('coach_profile');
-
     // Edit coach's public profile page (coach's view)
     Route::get('/edit_my_public_profile', [UserController::class, 'edit_public_profile_page'])->name('edit_public_profile_coach_page');
 

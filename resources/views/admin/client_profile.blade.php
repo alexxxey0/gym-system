@@ -55,6 +55,6 @@
             <h2>{{ $client->updated_at }}</h2>
         </div>
 
-        <a href="{{ route('edit_client_profile_page', ['client_id' => $client->client_id]) }}" class='mt-12 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 mx-auto rounded-md text-center text-xl'>Rediģēt klienta datus</a>
+        <x-main_link href="{{ route('edit_client_profile_page', ['client_id' => $client->client_id]) }}" class='mt-8 text-xl w-8/12 mx-auto'>Rediģēt klienta datus</x-main_link>
     </div>
 @endsection

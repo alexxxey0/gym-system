@@ -11,6 +11,10 @@
         }
     </style>
 
+    <div class='ml-8 mt-12'>
+        <x-secondary_link class='' href="{{ route('view_coach_profile', ['coach_id' => $coach->coach_id]) }}">← Atpakaļ uz trenera profilu</x-secondary_link>
+    </div>
+
     <h1 class='font-bold text-center text-2xl mt-8'>Trenera datu rediģēšana</h1>
 
     <form action="{{ route('edit_coach_profile') }}" method="POST" class='coach_info flex flex-col my-16 text-lg w-1/3 gap-y-4 mx-auto'>
