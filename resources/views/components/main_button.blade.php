@@ -1,3 +1,3 @@
-<div>
-    <!-- Always remember that you are absolutely unique. Just like everyone else. - Margaret Mead -->
-</div>
+<button {{ $attributes->merge(['class' => 'bg-[#007BFF] active:bg-[#0056b3] text-white py-2 rounded-md']) }}>
+    {{ $slot }}
+</button>

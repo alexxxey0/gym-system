@@ -3,6 +3,11 @@
 @section('title', "Klients $client->name $client->surname")
 
 @section('content')
+
+    @php
+        use Carbon\Carbon;
+    @endphp
+
     <style>
         .client_info > div {
             display: flex;
@@ -44,7 +49,15 @@
         </div>
         <div>
             <h2 class="font-bold">Abonements derīgs līdz:</h2>
-            <h2>{{ $client->membership_until ?? 'Nav' }}</h2>
+            @if (isset($client->membership_until))
+                @if (Carbon::parse($client->membership_until)->isPast())
+                    <h2 class='text-red-500'>{{ $client->membership_until }} (Abonements ir beidzies)</h2>
+                @else
+                    <h2>{{ $client->membership_until }}</h2>
+                @endif
+            @else
+                <h2>Nav</h2>
+            @endif
         </div>
         <div>
             <h2 class="font-bold">Klienta reģistrēšanas datums</h2>
@@ -56,5 +69,8 @@
         </div>
 
         <x-main_link href="{{ route('edit_client_profile_page', ['client_id' => $client->client_id]) }}" class='mt-8 text-xl w-8/12 mx-auto'>Rediģēt klienta datus</x-main_link>
+        @if (Carbon::parse($client->membership_until)->isPast())
+            <x-main_link href="{{ route('extend_client_membership_page', ['client_id' => $client->client_id]) }}" class='text-xl w-8/12 mx-auto'>Pagarināt klienta abonementu</x-main_link>
+        @endif
     </div>
 @endsection

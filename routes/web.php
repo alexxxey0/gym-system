@@ -80,6 +80,11 @@ Route::middleware(['auth:admin'])->group(function () {
     // Edit coach's public profile (action)
     Route::post('/coach/edit_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_admin');
 
+    // Extend client's membership page
+    Route::get('client/{client_id}/extend_membership', [ClientController::class, 'extend_membership_page'])->name('extend_client_membership_page');
+
+    Route::post('/extend_client_membership', [ClientController::class, 'extend_client_membership'])->name('extend_client_membership');
+
     // Admin's logout
     Route::post('/logout_admin', function () {
         Auth::guard('admin')->logout();
