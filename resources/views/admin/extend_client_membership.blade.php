@@ -64,7 +64,7 @@
             membership_price.innerHTML = "<span class='font-bold'>Maksājuma summa: </span>" + memberships_prices["{{ $memberships[0]['membership_name'] }}"] + '€';
         }
 
-        membership_name.addEventListener('change', function() {
+        membership_selection.addEventListener('change', function() {
             const selected_membership = this.value;
 
             membership_price.innerHTML = "<span class='font-bold'>Maksājuma summa: </span>" + memberships_prices[selected_membership] + '€';

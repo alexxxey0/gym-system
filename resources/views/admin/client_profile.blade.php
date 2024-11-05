@@ -69,8 +69,13 @@
         </div>
 
         <x-main_link href="{{ route('edit_client_profile_page', ['client_id' => $client->client_id]) }}" class='mt-8 text-xl w-8/12 mx-auto'>Rediģēt klienta datus</x-main_link>
+
         @if (Carbon::parse($client->membership_until)->isPast())
             <x-main_link href="{{ route('extend_client_membership_page', ['client_id' => $client->client_id]) }}" class='text-xl w-8/12 mx-auto'>Pagarināt klienta abonementu</x-main_link>
+        @endif
+
+        @if (!Carbon::parse($client->membership_until)->isPast())
+            <x-main_link href="{{ route('change_client_membership_page', ['client_id' => $client->client_id]) }}" class='text-xl w-8/12 mx-auto'>Mainīt klienta abonementa veidu</x-main_link>
         @endif
     </div>
 @endsection

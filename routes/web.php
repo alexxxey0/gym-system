@@ -83,7 +83,14 @@ Route::middleware(['auth:admin'])->group(function () {
     // Extend client's membership page
     Route::get('client/{client_id}/extend_membership', [ClientController::class, 'extend_membership_page'])->name('extend_client_membership_page');
 
+    // Extend client's membership (action)
     Route::post('/extend_client_membership', [ClientController::class, 'extend_client_membership'])->name('extend_client_membership');
+
+    // Change client's membership page
+    Route::get('client/{client_id}/change_membership', [ClientController::class, 'change_membership_page'])->name('change_client_membership_page');
+
+    // Change client's membership (action)
+    Route::post('/change_client_membership', [ClientController::class, 'change_client_membership'])->name('change_client_membership');
 
     // Admin's logout
     Route::post('/logout_admin', function () {
