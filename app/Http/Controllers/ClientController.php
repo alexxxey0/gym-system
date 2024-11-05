@@ -203,4 +203,15 @@ class ClientController extends Controller {
 
         return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi pagarināts!');
     }
+
+    public function nullify_client_membership(Request $request) {
+        $client = Client::where('client_id', $request->client_id)->first();
+
+        $client->update([
+            'membership_id' => null,
+            'membership_until' => null
+        ]);
+
+        return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi anulēts!');
+    }
 }

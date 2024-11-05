@@ -92,6 +92,9 @@ Route::middleware(['auth:admin'])->group(function () {
     // Change client's membership (action)
     Route::post('/change_client_membership', [ClientController::class, 'change_client_membership'])->name('change_client_membership');
 
+    // Nullify client's membership (action)
+    Route::post('/nullify_client_membership', [ClientController::class, 'nullify_client_membership'])->name('nullify_client_membership');
+
     // Admin's logout
     Route::post('/logout_admin', function () {
         Auth::guard('admin')->logout();

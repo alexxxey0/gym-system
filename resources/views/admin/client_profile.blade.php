@@ -76,6 +76,19 @@
 
         @if (!Carbon::parse($client->membership_until)->isPast())
             <x-main_link href="{{ route('change_client_membership_page', ['client_id' => $client->client_id]) }}" class='text-xl w-8/12 mx-auto'>Mainīt klienta abonementa veidu</x-main_link>
+
+            <form class='text-xl w-8/12 mx-auto' onsubmit="return nullify_client_membership_confirm(this);" action="{{ route('nullify_client_membership') }}" method="POST">
+                @csrf
+                <x-main_button type='submit'>Anulēt klienta abonementu</x-main_button>
+                <input type="hidden" name="client_id" value="{{ $client->client_id }}">
+            </form>
         @endif
     </div>
+
+    <script>
+        function nullify_client_membership_confirm() {
+            let confirm_message = "Vai tiešām gribat anulēt klienta {{ $client->name }} {{ $client->surname }} abonementu?";
+            return confirm(confirm_message);
+        }
+    </script>
 @endsection
