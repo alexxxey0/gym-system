@@ -128,4 +128,12 @@ class CoachController extends Controller {
 
         return redirect()->back()->with('message', 'Publiskā profila dati veiksmīgi atjaunoti!');
     }
+
+    public function our_coaches_page() {
+        $coaches = Coach::all();
+
+        return view('user.our_coaches', [
+            'coaches' => $coaches
+        ]);
+    }
 }

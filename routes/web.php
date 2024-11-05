@@ -26,6 +26,9 @@ Route::middleware(['auth:client,coach'])->group(function () {
 
     // User's own profile page
     Route::get('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
+
+    // "Our coaches" page
+    Route::get('/our_coaches', [CoachController::class, 'our_coaches_page'])->name('our_coaches');
 });
 
 // Admin routes
