@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CoachController;
+use App\Http\Controllers\GroupTrainingController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
@@ -135,6 +136,9 @@ Route::middleware(['auth:coach'])->group(function () {
 
     // Edit coach's public profile (action)
     Route::post('/edit_my_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
+
+    // Create new group training page
+    Route::get('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training_page'])->name('create_new_group_training_page');
 
     // Coach's logout
     Route::post('/logout_coach', function () {
