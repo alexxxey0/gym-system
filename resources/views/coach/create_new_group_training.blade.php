@@ -40,6 +40,17 @@
 
             <h2 class='mb-2 text-lg'>Nodarbības grafiks</h2>
 
+            <p>
+                Šeit jūs varat izveidot grupu nodarbības veida grafiku pa dienām. Atzīmējiet, kurās dienās notiks nodarbības, un tad katrai dienai norādiet nodarbības sākuma un beigu laikus. Ņemiet vērā, ka grafikam ir jāatbilst šiem noteikumiem:
+                <br>
+            </p>
+            <ul class="list-disc mt-4 mb-4">
+                <li>Nodarbības beigu laiks nevar būt vienāds vai agrāks par sākuma laiku</li>
+                <li>Nodarbības ilgums ir vismaz 30 minūtes</li>
+                <li>Nodarbības ilgums nepārsniedz 120 minūtes</li>
+                <li>Nodarbībai jānotiek sporta zāles darba laikā (darba dienās 08:00-22:00, brīvdienās 09:00-20:00)</li>
+            </ul>
+
             @for ($i = 0; $i < count($days_lv); $i++)
                 <div class='flex flex-row items-center justify-between gap-x-2 text-lg'>
                     <div class='flex flex-row items-center gap-x-4'>

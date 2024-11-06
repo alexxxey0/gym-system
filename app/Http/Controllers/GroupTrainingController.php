@@ -49,6 +49,9 @@ class GroupTrainingController extends Controller {
             'schedule' => [new valid_schedule]
         ], $messages);
 
+        // Save information about the group training to the database
+
+
         return redirect()->back()->with('message', 'Jauns grupu nodarbības veids veiksmīgi izveidots!');
     }
 }
