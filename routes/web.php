@@ -140,6 +140,9 @@ Route::middleware(['auth:coach'])->group(function () {
     // Create new group training page
     Route::get('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training_page'])->name('create_new_group_training_page');
 
+    // Create new group training (action)
+    Route::post('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training'])->name('create_new_group_training');
+
     // Coach's logout
     Route::post('/logout_coach', function () {
         Auth::guard('coach')->logout();

@@ -110,7 +110,7 @@ class CoachController extends Controller {
             'personal_description' => ['max:2000'],
             'contact_phone' => ['max:20'],
             'contact_email' => ['max:50'],
-            'profile_picture' => ['image', 'max:5000']
+            'profile_picture' => ['image', 'max:5000', 'nullable']
         ], $messages);
 
         // Save the profile picture to the server
