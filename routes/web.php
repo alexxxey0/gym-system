@@ -30,6 +30,9 @@ Route::middleware(['auth:client,coach'])->group(function () {
 
     // "Our coaches" page
     Route::get('/our_coaches', [CoachController::class, 'our_coaches_page'])->name('our_coaches');
+
+    // "Our group trainings" page
+    Route::get('/our_group_trainings', [GroupTrainingController::class, 'our_group_trainings_page'])->name('our_group_trainings');
 });
 
 // Admin routes

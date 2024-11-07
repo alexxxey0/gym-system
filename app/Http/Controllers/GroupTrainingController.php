@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Coach;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
+use App\Http\Controllers\Controller;
 
 // This controller is responsible for actions that are related to group trainings
 
@@ -69,5 +70,31 @@ class GroupTrainingController extends Controller {
 
 
         return redirect()->back()->with('message', 'Jauns grupu nodarbības veids veiksmīgi izveidots!');
+    }
+
+    public function our_group_trainings_page() {
+        $group_trainings = GroupTraining::all();
+
+        for ($i = 0; $i < count($group_trainings); $i++) {
+            $coach = Coach::where('coach_id', $group_trainings[$i]['coach_id'])->first();
+            $group_trainings[$i]['coach'] = $coach;
+
+            $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
+        }
+
+        $days_translations = [
+            'monday' => 'Pirmdiena',
+            'tuesday' => 'Otrdiena',
+            'wednesday' => 'Trešdiena',
+            'thursday' => 'Ceturtdiena',
+            'friday' => 'Piektdiena',
+            'saturday' => 'Sestdiena',
+            'sunday' => 'Svētdiena'
+        ];
+
+        return view('user.our_group_trainings', [
+            'group_trainings' => $group_trainings,
+            'days_translations' => $days_translations
+        ]);
     }
 }
