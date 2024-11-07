@@ -15,42 +15,42 @@ class valid_schedule implements ValidationRule {
     public function validate(string $attribute, mixed $value, Closure $fail): void {
         $invalid_days_array_eng = array();
 
-        foreach ($value as $day) {
+        foreach ($value as $day => $schedule) {
 
-            $day_start_time = Carbon::parse($day['start']);
-            $day_end_time = Carbon::parse($day['end']);
+            $day_start_time = Carbon::parse($schedule['start']);
+            $day_end_time = Carbon::parse($schedule['end']);
             $gym_opening_weekday = Carbon::parse('08:00');
             $gym_closing_weekday = Carbon::parse('22:00');
             $gym_opening_weekend = Carbon::parse('09:00');
             $gym_closing_weekend = Carbon::parse('20:00');
 
             if (!isset($day_start_time) or !$day_start_time) {
-                $invalid_days_array_eng[] = $day['day'];
+                $invalid_days_array_eng[] = $day;
             }
 
             if (!isset($day_end_time) or !$day_end_time) {
-                $invalid_days_array_eng[] = $day['day'];
+                $invalid_days_array_eng[] = $day;
             }
 
             if ($day_end_time->lessThanOrEqualTo($day_start_time)) {
-                $invalid_days_array_eng[] = $day['day'];
+                $invalid_days_array_eng[] = $day;
             }
 
             if ($day_start_time->diffInMinutes($day_end_time) < 30) {
-                $invalid_days_array_eng[] = $day['day'];
+                $invalid_days_array_eng[] = $day;
             }
 
             if ($day_start_time->diffInMinutes($day_end_time) > 120) {
-                $invalid_days_array_eng[] = $day['day'];
+                $invalid_days_array_eng[] = $day;
             }
 
-            if (in_array($day['day'], ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])) {
+            if (in_array($day, ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])) {
                 if ($day_start_time->lessThan($gym_opening_weekday) or $day_end_time->greaterThan($gym_closing_weekday)) {
-                    $invalid_days_array_eng[] = $day['day'];
+                    $invalid_days_array_eng[] = $day;
                 }
             } else {
                 if ($day_start_time->lessThan($gym_opening_weekend) or $day_end_time->greaterThan($gym_closing_weekend)) {
-                    $invalid_days_array_eng[] = $day['day'];
+                    $invalid_days_array_eng[] = $day;
                 }
             }
         }

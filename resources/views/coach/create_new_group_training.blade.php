@@ -84,6 +84,7 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('max_participants') }}</div>
         @endif
 
+        <input type="hidden" name="coach_id" value="{{ Auth::user()->coach_id }}">
         <x-main_button type='submit' class='mt-8 text-lg w-1/2 mx-auto p-4'>Izveidot jaunu grupu nodarbības veidu</x-main_button>
     </form>
 

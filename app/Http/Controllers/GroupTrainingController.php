@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 
 // This controller is responsible for actions that are related to group trainings
@@ -25,7 +26,6 @@ class GroupTrainingController extends Controller {
                 $day_end_time = $request['end_time_' . $day];
                 $schedule[$day]['start'] = $day_start_time;
                 $schedule[$day]['end'] = $day_end_time;
-                $schedule[$day]['day'] = $day;
             }
         }
         $request['schedule'] = $schedule;
@@ -49,7 +49,23 @@ class GroupTrainingController extends Controller {
             'schedule' => [new valid_schedule]
         ], $messages);
 
+        // Save the profile picture to the server
+        if (isset($request['image'])) {
+            $image = $request->file('image');
+            $path = $image->store('group_trainings_pictures', 'public');
+        }
+
         // Save information about the group training to the database
+        GroupTraining::create([
+            'name' => $form_data['title'],
+            'description' => $form_data['description'],
+            'coach_id' => $request['coach_id'],
+            'schedule' => json_encode($form_data['schedule']),
+            'clients_signed_up' => 0,
+            'max_clients' => intval($form_data['max_participants']),
+            'path_to_image' => $path ?? null,
+            'active' => true
+        ]);
 
 
         return redirect()->back()->with('message', 'Jauns grupu nodarbības veids veiksmīgi izveidots!');
