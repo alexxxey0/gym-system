@@ -82,7 +82,7 @@ class GroupTrainingController extends Controller {
     }
 
     public function our_group_trainings_page() {
-        $group_trainings = GroupTraining::all();
+        $group_trainings = GroupTraining::where('active', true)->get();
 
         for ($i = 0; $i < count($group_trainings); $i++) {
             $coach = Coach::where('coach_id', $group_trainings[$i]['coach_id'])->first();
@@ -108,7 +108,7 @@ class GroupTrainingController extends Controller {
     }
 
     public function my_group_trainings() {
-        $group_trainings = GroupTraining::where('coach_id', Auth::user()->coach_id)->get();
+        $group_trainings = GroupTraining::where('coach_id', Auth::user()->coach_id)->where('active', true)->get();
 
         for ($i = 0; $i < count($group_trainings); $i++) {
             $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
@@ -199,5 +199,19 @@ class GroupTrainingController extends Controller {
 
 
         return redirect()->back()->with('message', 'Nodarbības dati veiksmīgi rediģēti!');
+    }
+
+    public function cancel_group_training(Request $request) {
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        if (Auth::user()->role === 'coach' and $group_training->coach_id !== Auth::user()->coach_id) {
+            return redirect()->back()->with('message', 'Kļūda: jums nav tiesību atcelt šo nodarbības veidu!');
+        } else {
+            $group_training->update([
+                'active' => false
+            ]);
+
+            return redirect()->back()->with('message', 'Nodarbības veids veiksmīgi atcelts!');
+        }
     }
 }

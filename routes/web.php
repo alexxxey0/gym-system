@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use PHPUnit\Framework\Attributes\Group;
 
 Route::get('/', function () {
     return view('welcome');
@@ -53,6 +54,9 @@ Route::middleware('auth:coach,admin')->group(function () {
 
     // Edit group training (action)
     Route::post('/edit_group_training', [GroupTrainingController::class, 'edit_group_training'])->name('edit_group_training');
+
+    // Cancel group training
+    Route::post('/cancel_group_training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
 });
 
 // Admin routes
