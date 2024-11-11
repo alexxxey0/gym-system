@@ -1,9 +1,13 @@
 @extends('layouts.' . Auth::user()->role)
 
-@section('title', 'Mūsu treneri')
+@section('title', Auth::user()->role === 'client' ? 'Mūsu treneri' : 'Visi treneri')
 
 @section('content')
-    <h1 class='text-center text-3xl font-bold mt-8'>Mūsu treneri</h1>
+    @if (Auth::user()->role === 'client')
+        <h1 class='text-center text-3xl font-bold mt-8'>Mūsu treneri</h1>
+    @else
+        <h1 class='text-center text-3xl font-bold mt-8'>Visi treneri</h1>
+    @endif
 
     <div class='flex flex-col gap-y-16 mt-12 mb-8 items-center'>
     @foreach($coaches as $coach)

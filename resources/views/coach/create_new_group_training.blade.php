@@ -1,4 +1,4 @@
-@extends('layouts.coach')
+@extends('layouts.' . Auth::user()->role)
 
 @section('title', 'Jauna grupu nodarbības veida izveidošana')
 

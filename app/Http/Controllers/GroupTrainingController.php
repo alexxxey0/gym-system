@@ -16,10 +16,12 @@ class GroupTrainingController extends Controller {
     public function create_new_group_training_page() {
         if (Auth::user()->role === 'admin') {
             $coaches = Coach::all();
+        } else {
+            $coaches = null;
         }
 
         return view('coach.create_new_group_training', [
-            'coaches' => $coaches
+            'coaches' => $coaches,
         ]);
     }
 
@@ -102,6 +104,37 @@ class GroupTrainingController extends Controller {
         return view('user.our_group_trainings', [
             'group_trainings' => $group_trainings,
             'days_translations' => $days_translations
+        ]);
+    }
+
+    public function my_group_trainings() {
+        $group_trainings = GroupTraining::where('coach_id', Auth::user()->coach_id)->get();
+
+        for ($i = 0; $i < count($group_trainings); $i++) {
+            $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
+        }
+
+        $days_translations = [
+            'monday' => 'Pirmdiena',
+            'tuesday' => 'Otrdiena',
+            'wednesday' => 'Trešdiena',
+            'thursday' => 'Ceturtdiena',
+            'friday' => 'Piektdiena',
+            'saturday' => 'Sestdiena',
+            'sunday' => 'Svētdiena'
+        ];
+
+        return view('coach.my_group_trainings', [
+            'group_trainings' => $group_trainings,
+            'days_translations' => $days_translations
+        ]);
+    }
+
+    public function edit_group_training_page(Request $request) {
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        return view('coach.edit_group_training', [
+            'group_training' => $group_training
         ]);
     }
 }
