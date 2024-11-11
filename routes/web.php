@@ -35,6 +35,16 @@ Route::middleware(['auth:client,coach'])->group(function () {
     Route::get('/our_group_trainings', [GroupTrainingController::class, 'our_group_trainings_page'])->name('our_group_trainings');
 });
 
+// Routes for coaches and admin
+Route::middleware('auth:coach,admin')->group(function() {
+    
+    // Create new group training page
+    Route::get('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training_page'])->name('create_new_group_training_page');
+
+    // Create new group training (action)
+    Route::post('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training'])->name('create_new_group_training');
+});
+
 // Admin routes
 Route::middleware(['auth:admin'])->group(function () {
 
@@ -139,12 +149,6 @@ Route::middleware(['auth:coach'])->group(function () {
 
     // Edit coach's public profile (action)
     Route::post('/edit_my_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
-
-    // Create new group training page
-    Route::get('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training_page'])->name('create_new_group_training_page');
-
-    // Create new group training (action)
-    Route::post('/create_new_group_training', [GroupTrainingController::class, 'create_new_group_training'])->name('create_new_group_training');
 
     // Coach's logout
     Route::post('/logout_coach', function () {

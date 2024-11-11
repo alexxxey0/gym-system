@@ -84,7 +84,17 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('max_participants') }}</div>
         @endif
 
-        <input type="hidden" name="coach_id" value="{{ Auth::user()->coach_id }}">
+        @if (Auth::user()->role === 'coach')
+            <input type="hidden" name="coach_id" value="{{ Auth::user()->coach_id }}">
+        @else
+            <label class='text-lg' for="coach_id">Treneris</label>
+            <h2>Izvēlieties treneri, kas vadīs nodarbības.</h2>
+            <select name="coach_id" required class='w-fit'>
+                @foreach ($coaches as $coach)
+                    <option value="{{ $coach->coach_id }}">{{ $coach->name }}  {{ $coach->surname }} (p.k. {{ $coach->personal_id }})</option>
+                @endforeach
+            </select>
+        @endif
         <x-main_button type='submit' class='mt-8 text-lg w-1/2 mx-auto p-4'>Izveidot jaunu grupu nodarbības veidu</x-main_button>
     </form>
 

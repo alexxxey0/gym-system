@@ -1,10 +1,14 @@
 @extends('layouts.' . Auth::user()->role)
 
-@section('title', 'Mūsu grupu nodarbības')
+@section('title', Auth::user()->role === 'client' ? 'Mūsu grupu nodarbības' : 'Visas grupu nodarbības')
 
 @section('content')
 
-    <h1 class='text-center text-3xl font-bold mt-8'>Mūsu grupu nodarbības</h1>
+    @if (Auth::user()->role === 'client')
+        <h1 class='text-center text-3xl font-bold mt-8'>Mūsu grupu nodarbības</h1>
+    @else
+        <h1 class='text-center text-3xl font-bold mt-8'>Visas grupu nodarbības</h1>
+    @endif
 
     <div class='flex flex-col mt-12 mb-12 gap-y-12'>
         @foreach($group_trainings as $group_training)
@@ -28,7 +32,9 @@
 
                     @if ($group_training->clients_signed_up < $group_training->max_clients)
                         <h2 class='text-green-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
-                        <x-main_button class='w-1/3 mr-auto'>Pieteikties</x-main_button>
+                        @if (Auth::user()->role === 'client')
+                            <x-main_button class='w-1/3 mr-auto'>Pieteikties</x-main_button>
+                        @endif
                     @else
                         <h2 class='text-red-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
                     @endif

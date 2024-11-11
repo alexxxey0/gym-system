@@ -3,4 +3,5 @@
     <a href="{{ route('register_coach') }}" class='hover:text-[#007BFF]'>Reģistrēt jaunu treneri</a>
     <a href="{{ route('clients_list') }}" class='hover:text-[#007BFF]'>Visi klienti</a>
     <a href="{{ route('coaches_list') }}" class='hover:text-[#007BFF]'>Visi treneri</a>
+    <a href="{{ route('create_new_group_training_page') }}" class="hover:text-[#007BFF]">Izveidot jaunu grupu nodarbības veidu</a>
 </nav>

@@ -8,12 +8,19 @@ use Illuminate\Http\Request;
 use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 // This controller is responsible for actions that are related to group trainings
 
 class GroupTrainingController extends Controller {
     public function create_new_group_training_page() {
-        return view('coach.create_new_group_training');
+        if (Auth::user()->role === 'admin') {
+            $coaches = Coach::all();
+        }
+
+        return view('coach.create_new_group_training', [
+            'coaches' => $coaches
+        ]);
     }
 
     public function create_new_group_training(Request $request) {
