@@ -1,9 +1,17 @@
 @extends('layouts.' . Auth::user()->role)
 
-@section('title', 'Jauna grupu nodarbības veida izveidošana')
+@section('title', 'Grupu nodarbības veida datu rediģēšana')
 
 @section('content')
-    <h1 class='mt-8 font-bold text-center text-3xl'>Jauna grupu nodarbības veida izveidošana</h1>
+    @if (Auth::user()->role === 'coach' and $group_training->coach_id !== Auth::user()->coach_id)
+        <style>
+            html, body {
+                height: 100%;
+            }
+        </style>
+        <h1 class='mt-8 font-bold text-center text-3xl'>Jums nav tiesību rediģēt šo nodarbību.</h1>
+    @else
+    <h1 class='mt-8 font-bold text-center text-3xl'>Grupu nodarbības veida datu rediģēšana</h1>
 
     <form action="{{ route('edit_group_training') }}" method="POST" class='flex flex-col gap-y-4 w-6/12 mt-12 mb-8 mx-auto' enctype="multipart/form-data">
         @csrf
@@ -134,4 +142,5 @@
         }
 
     </script>
+    @endif
 @endsection
