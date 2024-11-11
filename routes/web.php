@@ -50,6 +50,9 @@ Route::middleware('auth:coach,admin')->group(function () {
 
     // Edit group training page
     Route::get('/edit_group_training/{training_id}', [GroupTrainingController::class, 'edit_group_training_page'])->name('edit_group_training_page');
+
+    // Edit group training (action)
+    Route::post('/edit_group_training', [GroupTrainingController::class, 'edit_group_training'])->name('edit_group_training');
 });
 
 // Admin routes

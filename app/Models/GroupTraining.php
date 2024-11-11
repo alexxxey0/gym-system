@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GroupTraining extends Model
-{
+class GroupTraining extends Model {
     use HasFactory;
     protected $table = 'group_trainings';
     protected $guarded = [];
+    protected $primaryKey = 'training_id';
 }
