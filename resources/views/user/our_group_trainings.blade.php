@@ -7,6 +7,14 @@
 
     @if (Auth::user()->role === 'client')
         <h1 class='text-center text-3xl font-bold mt-8'>Mūsu grupu nodarbības</h1>
+
+        <div class='w-1/2 mx-auto text-lg mt-6'>
+            <p class=''>Šeit jūs varat apskatīt sarakstu ar visām mūsu grupu nodarbībām un pieteikties nodarbībām, kas jūs interesē. Atteikties no nodarbības jūs varat sadaļā <a class='underline hover:text-blue-900' href="{{ route('my_group_trainings_client') }}">"Manas grupu nodarbības"</a>.</p>
+
+            @if (!$group_trainings_included)
+                <p class=''>Pašlaik jūs nevarat pieteikties grupu nodarbībām, jo jūsu abonementā tās nav iekļautas. Dodieties <a href="">šeit</a>, lai apskatītu pieejamus abonementus.</p>
+            @endif
+        </div>
     @else
         <h1 class='text-center text-3xl font-bold mt-8'>Visas grupu nodarbības</h1>
     @endif
@@ -43,10 +51,24 @@
                         @if ($group_training->clients_signed_up < $group_training->max_clients)
                             <h2 class='text-green-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
                             @if (Auth::user()->role === 'client')
-                                <x-main_button class='w-1/3 mr-auto'>Pieteikties</x-main_button>
+                                @if ($group_trainings_included)
+                                    @if (!$group_training->client_signed_up)
+                                        <form action='{{ route('sign_up_for_group_training') }}' method="POST">
+                                            @csrf
+                                            <input type="hidden" name="training_id" value="{{ $group_training->training_id }}">
+                                            <x-main_button type='submit' class='w-1/3 mr-auto'>Pieteikties</x-main_button>
+                                        </form>
+                                    @endif
+                                @else
+                                    <x-main_button class='w-1/2 mr-auto bg-gray-400 active:bg-gray-500 cursor-not-allowed' disabled>Grupu nodarbības nav iekļautas jūsu abonementā</x-main_button>
+                                @endif
                             @endif
                         @else
                             <h2 class='text-red-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
+                        @endif
+                        
+                        @if ($group_training->client_signed_up)
+                            <x-main_button class='bg-gray-400 active:bg-gray-500 w-1/2 mr-auto p-4' disabled>Jūs esat pieteicies šai nodarbībai</x-main_button>
                         @endif
 
                         @if (Auth::user()->role === 'admin')

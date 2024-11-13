@@ -8,7 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 use App\Http\Controllers\Controller;
+use App\Models\ClientTraining;
+use App\Models\Membership;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 // This controller is responsible for actions that are related to group trainings
 
@@ -82,13 +85,30 @@ class GroupTrainingController extends Controller {
     }
 
     public function our_group_trainings_page() {
+
+        // If the user is a client, check whether his membership includes group trainings
+        $group_trainings_included = null;
+        if (Auth::user()->role === 'client') {
+            $membership = Membership::where('membership_id', Auth::user()->membership_id)->first();
+
+            if ($membership->group_trainings_included) $group_trainings_included = true;
+            else $group_trainings_included = false;
+        }
+
         $group_trainings = GroupTraining::where('active', true)->get();
 
         for ($i = 0; $i < count($group_trainings); $i++) {
             $coach = Coach::where('coach_id', $group_trainings[$i]['coach_id'])->first();
             $group_trainings[$i]['coach'] = $coach;
-
             $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
+
+            if (Auth::user()->role === 'client') {
+                if (ClientTraining::where('client_id', Auth::user()->client_id)->where('training_id', $group_trainings[$i]['training_id'])->exists()) {
+                    $group_trainings[$i]['client_signed_up'] = true;
+                } else {
+                    $group_trainings[$i]['client_signed_up'] = false;
+                }
+            }
         }
 
         $days_translations = [
@@ -103,11 +123,12 @@ class GroupTrainingController extends Controller {
 
         return view('user.our_group_trainings', [
             'group_trainings' => $group_trainings,
-            'days_translations' => $days_translations
+            'days_translations' => $days_translations,
+            'group_trainings_included' => $group_trainings_included
         ]);
     }
 
-    public function my_group_trainings() {
+    public function my_group_trainings_coach() {
         $group_trainings = GroupTraining::where('coach_id', Auth::user()->coach_id)->where('active', true)->get();
 
         for ($i = 0; $i < count($group_trainings); $i++) {
@@ -125,6 +146,33 @@ class GroupTrainingController extends Controller {
         ];
 
         return view('coach.my_group_trainings', [
+            'group_trainings' => $group_trainings,
+            'days_translations' => $days_translations
+        ]);
+    }
+
+    public function my_group_trainings_client() {
+        $client_trainings = ClientTraining::where('client_id', Auth::user()->client_id)->pluck('training_id')->toArray();
+        $group_trainings = GroupTraining::whereIn('training_id', $client_trainings)->get();
+
+        for ($i = 0; $i < count($group_trainings); $i++) {
+            $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
+
+            $coach = Coach::where('coach_id', $group_trainings[$i]['coach_id'])->first();
+            $group_trainings[$i]['coach'] = $coach;
+        }
+
+        $days_translations = [
+            'monday' => 'Pirmdiena',
+            'tuesday' => 'Otrdiena',
+            'wednesday' => 'Trešdiena',
+            'thursday' => 'Ceturtdiena',
+            'friday' => 'Piektdiena',
+            'saturday' => 'Sestdiena',
+            'sunday' => 'Svētdiena'
+        ];
+
+        return view('client.my_group_trainings', [
             'group_trainings' => $group_trainings,
             'days_translations' => $days_translations
         ]);
@@ -211,7 +259,41 @@ class GroupTrainingController extends Controller {
                 'active' => false
             ]);
 
+            // Delete records about the clients who are signed up for this group training
+            ClientTraining::where('training_id', $request->training_id)->delete();
+
             return redirect()->back()->with('message', 'Nodarbības veids veiksmīgi atcelts!');
         }
+    }
+
+    public function sign_up_for_group_training(Request $request) {
+
+        ClientTraining::create([
+            'client_id' => Auth::user()->client_id,
+            'training_id' => $request->training_id
+        ]);
+
+        // Increment the count of clients signed up by 1
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        $group_training->update([
+            'clients_signed_up' => intval($group_training->clients_signed_up) + 1
+        ]);
+
+        return redirect()->back()->with('message', 'Jūs veiksmīgi pieteicāties nodarbībai!');
+    }
+
+    public function quit_group_training(Request $request) {
+
+        // Decrement the count of clients signed up by 1
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        $group_training->update([
+            'clients_signed_up' => intval($group_training->clients_signed_up) - 1
+        ]);
+
+        ClientTraining::where('client_id', Auth::user()->client_id)->where('training_id', $request->training_id)->delete();
+
+        return redirect()->back()->with('message', 'Jūs veiksmīgi atteicāties no nodarbības!');
     }
 }

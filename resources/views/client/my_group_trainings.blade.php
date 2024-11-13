@@ -1,6 +1,6 @@
 @extends('layouts.' . Auth::user()->role)
 
-@section('title', 'Manas grupu nodarbīas')
+@section('title', 'Manas grupu nodarbības')
 
 @section('content')
 
@@ -12,7 +12,7 @@
                 height: 100%;
             }
         </style>
-        <h1 class='text-center text-3xl font-bold mt-8'>Jums nav neviena nodarbības veida</h1>
+        <h1 class='text-center text-3xl font-bold mt-8'>Jūs neesat pieteicies nevienai nodarbībai</h1>
     @else
 
         <div class='flex flex-col mt-12 mb-12 gap-y-12'>
@@ -27,6 +27,7 @@
                     <div class='flex flex-col gap-y-4 w-full'>
                         <h2 class='font-bold text-2xl'>{{ $group_training->name }}</h2>
                         <p>{{ $group_training->description }}</p>
+                        <h2 class='text-lg'><span class='font-bold'>Treneris: </span>{{ $group_training->coach->name }} {{ $group_training->coach->surname }}</h2>
                         
                         <ul class='list-none'>
                             @foreach($group_training->schedule as $day => $times)
@@ -39,26 +40,29 @@
                         @else
                             <h2 class='text-red-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
                         @endif
-                        <x-main_link class='w-1/2 mr-auto' href="{{ route('edit_group_training_page', ['training_id' => $group_training->training_id]) }}">Rediģēt nodarbības informāciju</x-main_link>
-                        <form action="{{ route('cancel_group_training') }}" method="POST" onsubmit="return confirm_training_deletion(this);">
-                            @csrf
-                            <input type="hidden" name="training_id" value="{{ $group_training->training_id }}">
-                            <input type="hidden" name="training_name" value="{{ $group_training->name }}">
-                            <x-main_button type='submit' class='bg-red-500 active:bg-red-700 w-1/2 mr-auto'>Atcelt nodarbības veidu</x-main_button>
-                        </form>
+
+                        @if (Auth::user()->role === 'client')
+                            <form action='{{ route('quit_group_training') }}' method="POST" onsubmit="return confirm_quitting_training(this);">
+                                @csrf
+                                <input type="hidden" name="training_id" value="{{ $group_training->training_id }}">
+                                <input type="hidden" name="training_name" value="{{ $group_training->name }}">
+                                <x-main_button type='submit' class='w-1/3 mr-auto bg-red-500 active:bg-red-700'>Atteikties</x-main_button>
+                            </form>
+                        @endif
+
                     </div>
                 </div>
                 <hr class='w-10/12 mx-auto'>
             @endforeach
         </div>
-
-        <script>
-            function confirm_training_deletion(form) {
-                let form_data = new FormData(form);
-
-                const confirm_message = `Vai tiešām gribat atcelt nodarbības veidu ${form_data.get('training_name')}?`;
-                return confirm(confirm_message);
-            }
-        </script>
     @endif
+
+    <script>
+        function confirm_quitting_training(form) {
+            let form_data = new FormData(form);
+            const confirm_message = `Vai tiešām gribāt atteikties no grupu nodarbības ${form_data.get('training_name')}?`;
+
+            return confirm(confirm_message);
+        }
+    </script>
 @endsection

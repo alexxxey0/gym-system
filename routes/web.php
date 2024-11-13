@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\GroupTraining;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use PHPUnit\Framework\Attributes\Group;
@@ -18,10 +19,9 @@ Route::get('/', function () {
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login_post');
 
 // Routes for any authenticated user
-Route::middleware(['auth:client,coach,admin'])->group(function() {
+Route::middleware(['auth:client,coach,admin'])->group(function () {
     // "Our group trainings" page
     Route::get('/our_group_trainings', [GroupTrainingController::class, 'our_group_trainings_page'])->name('our_group_trainings');
-
 });
 
 // Routes for clients and coaches
@@ -142,6 +142,15 @@ Route::middleware(['auth:client'])->group(function () {
         return view('client.client_homepage');
     })->name('client_homepage');
 
+    // Sign up for group training
+    Route::post('/sign_up_for_group_training', [GroupTrainingController::class, 'sign_up_for_group_training'])->name('sign_up_for_group_training');
+
+    // Quit group training
+    Route::post('/quit_group_training', [GroupTrainingController::class, 'quit_group_training'])->name('quit_group_training');
+
+    // Client's group trainings
+    Route::get('/my_group_trainings_client', [GroupTrainingController::class, 'my_group_trainings_client'])->name('my_group_trainings_client');
+
     // Client's logout
     Route::post('/logout_client', function () {
         Auth::guard('client')->logout();
@@ -165,7 +174,7 @@ Route::middleware(['auth:coach'])->group(function () {
     Route::post('/edit_my_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_coach');
 
     // Coach's group trainings
-    Route::get('/my_group_trainings', [GroupTrainingController::class, 'my_group_trainings'])->name('my_group_trainings');
+    Route::get('/my_group_trainings_coach', [GroupTrainingController::class, 'my_group_trainings_coach'])->name('my_group_trainings_coach');
 
     // Coach's logout
     Route::post('/logout_coach', function () {
