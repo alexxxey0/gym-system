@@ -26,12 +26,24 @@
                         <h2 class='font-bold text-2xl'>{{ $coach->name }} {{ $coach->surname }}</h2>
                         <p>{{ $coach->personal_description }}</p>
                     </div>
+
                     <div>
                         @if (isset($coach->contact_phone))
                             <p><span class='font-bold'>Kontakttelefons:</span> {{ $coach->contact_phone }}</p>
                         @endif
                         @if (isset($coach->contact_email))
                             <p><span class='font-bold'>Kontakte-pasts:</span> <a class='text-blue-800 hover:text-blue-900 hover:underline' href="mailto:{{ $coach->contact_email }}">{{ $coach->contact_email }}</a></p>
+                        @endif
+                    </div>
+
+                    <div>
+                        @if(isset($coach->group_trainings) and count($coach->group_trainings) > 0)
+                            <h2 class='text-lg'>Vada nodarbības:</h2>
+                            <ul class='list-disc list-inside'>
+                                @foreach($coach->group_trainings as $group_training)
+                                    <li>{{ $group_training->name }}</li>
+                                @endforeach
+                            </ul>
                         @endif
                     </div>
                 </div>

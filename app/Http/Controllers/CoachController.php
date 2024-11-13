@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Coach;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\GroupTraining;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
@@ -131,6 +132,11 @@ class CoachController extends Controller {
 
     public function our_coaches_page() {
         $coaches = Coach::all();
+
+        for ($i = 0; $i < count($coaches); $i++) {
+            $group_trainings = GroupTraining::where('coach_id', $coaches[$i]->coach_id)->get();
+            $coaches[$i]['group_trainings'] = $group_trainings;
+        }
 
         return view('user.our_coaches', [
             'coaches' => $coaches
