@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'My Laravel App')</title>
-    <link rel="shortcut icon" href="{{ asset('images/fitlife_icon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('storage/images/fitlife_icon.png') }}" type="image/x-icon">
     @vite('resources/css/app.css')
 
     <style>

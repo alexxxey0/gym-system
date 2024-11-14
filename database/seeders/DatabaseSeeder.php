@@ -15,7 +15,8 @@ class DatabaseSeeder extends Seeder {
             AdminSeeder::class,
             MembershipSeeder::class,
             ClientSeeder::class,
-            CoachSeeder::class
+            CoachSeeder::class,
+            GroupTrainingSeeder::class
         ]);
     }
 }
