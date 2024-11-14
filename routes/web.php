@@ -1,16 +1,18 @@
 <?php
 
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\CoachController;
-use App\Http\Controllers\GroupTrainingController;
-use App\Http\Controllers\LoginController;
-use App\Http\Controllers\RegistrationController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Models\Membership;
 use App\Models\GroupTraining;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Group;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CoachController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\GroupTrainingController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -20,8 +22,12 @@ Route::post('/login', [LoginController::class, 'authenticate'])->name('login_pos
 
 // Routes for any authenticated user
 Route::middleware(['auth:client,coach,admin'])->group(function () {
+
     // "Our group trainings" page
     Route::get('/our_group_trainings', [GroupTrainingController::class, 'our_group_trainings_page'])->name('our_group_trainings');
+
+    // Page with information about available memberships
+    Route::get('/our_memberships', [MembershipController::class, 'our_memberships'])->name('our_memberships');
 });
 
 // Routes for clients and coaches
@@ -112,19 +118,19 @@ Route::middleware(['auth:admin'])->group(function () {
     Route::post('/coach/edit_public_profile', [CoachController::class, 'edit_public_profile'])->name('edit_public_profile_admin');
 
     // Extend client's membership page
-    Route::get('client/{client_id}/extend_membership', [ClientController::class, 'extend_membership_page'])->name('extend_client_membership_page');
+    Route::get('client/{client_id}/extend_membership', [MembershipController::class, 'extend_membership_page'])->name('extend_client_membership_page');
 
     // Extend client's membership (action)
-    Route::post('/extend_client_membership', [ClientController::class, 'extend_client_membership'])->name('extend_client_membership');
+    Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
 
     // Change client's membership page
-    Route::get('client/{client_id}/change_membership', [ClientController::class, 'change_membership_page'])->name('change_client_membership_page');
+    Route::get('client/{client_id}/change_membership', [MembershipController::class, 'change_membership_page'])->name('change_client_membership_page');
 
     // Change client's membership (action)
-    Route::post('/change_client_membership', [ClientController::class, 'change_client_membership'])->name('change_client_membership');
+    Route::post('/change_client_membership', [MembershipController::class, 'change_client_membership'])->name('change_client_membership');
 
     // Nullify client's membership (action)
-    Route::post('/nullify_client_membership', [ClientController::class, 'nullify_client_membership'])->name('nullify_client_membership');
+    Route::post('/nullify_client_membership', [MembershipController::class, 'nullify_client_membership'])->name('nullify_client_membership');
 
     // Admin's logout
     Route::post('/logout_admin', function () {

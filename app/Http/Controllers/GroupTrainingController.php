@@ -88,7 +88,7 @@ class GroupTrainingController extends Controller {
 
         // If the user is a client, check whether his membership includes group trainings
         $group_trainings_included = null;
-        if (Auth::user()->role === 'client') {
+        if (Auth::user()->role === 'client' and isset(Auth::user()->membership_id)) {
             $membership = Membership::where('membership_id', Auth::user()->membership_id)->first();
 
             if ($membership->group_trainings_included) $group_trainings_included = true;
