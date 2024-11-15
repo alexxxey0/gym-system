@@ -61,6 +61,12 @@ Route::middleware('auth:coach,admin')->group(function () {
     // Edit group training (action)
     Route::post('/edit_group_training', [GroupTrainingController::class, 'edit_group_training'])->name('edit_group_training');
 
+    // Send notification page
+    Route::get('/send_notification_page/{training_id}', [GroupTrainingController::class, 'send_notification_page'])->name('send_notification_page');
+
+    // Send notification (action)
+    Route::post('/send_notification', [GroupTrainingController::class, 'send_notification'])->name('send_notification');
+
     // Cancel group training
     Route::post('/cancel_group_training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
 });

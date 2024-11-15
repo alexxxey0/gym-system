@@ -79,6 +79,9 @@
                                 <input type="hidden" name="training_name" value="{{ $group_training->name }}">
                                 <x-main_button type='submit' class='bg-red-500 active:bg-red-700 w-1/2 mr-auto'>Atcelt nodarbības veidu</x-main_button>
                             </form>
+                            @if ($group_training->clients_signed_up > 0)
+                                <x-main_link class='w-1/2 mr-auto' href="{{ route('send_notification_page', ['training_id' => $group_training->training_id]) }}">Nosūtīt paziņojumu nodarbības apmeklētājiem</x-main_link>
+                            @endif
                         @endif
                     </div>
                 </div>

@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Coach;
+use App\Models\Client;
+use App\Models\Membership;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
-use App\Http\Controllers\Controller;
 use App\Models\ClientTraining;
-use App\Models\Membership;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 
 // This controller is responsible for actions that are related to group trainings
@@ -295,5 +298,63 @@ class GroupTrainingController extends Controller {
         ClientTraining::where('client_id', Auth::user()->client_id)->where('training_id', $request->training_id)->delete();
 
         return redirect()->back()->with('message', 'Jūs veiksmīgi atteicāties no nodarbības!');
+    }
+
+    public function send_notification_page(Request $request) {
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        return view('coach.send_notification_page', [
+            'group_training' => $group_training
+        ]);
+    }
+
+    public function send_notification(Request $request) {
+
+        $form_data = $request->validate([
+            'topic' => ['required', 'max:100'],
+            'text' => ['required', 'max:1000']
+        ]);
+
+        if (Auth::user()->role === 'coach') {
+            $coach_id = $request->coach_id;
+            $from_admin = false;
+        } else {
+            $coach_id = null;
+            $from_admin = true;
+        }
+
+        // Save the notification to the database
+        Notification::create([
+            'notification_topic' => $form_data['topic'],
+            'notification_text' => $form_data['text'],
+            'sender_coach_id' => $coach_id,
+            'from_admin' => $from_admin,
+            'receiver_training_id' => $request->training_id
+        ]);
+
+
+        // Send the notification to clients' emails
+        $clients_ids = ClientTraining::where('training_id', $request->training_id)->pluck('client_id')->toArray();
+        $clients = Client::whereIn('client_id', $clients_ids)->get();
+
+        if (!$from_admin) {
+            $coach = Coach::where('coach_id', $coach_id)->first();
+            $coach_full_name = $coach->name . " " . $coach->surname;
+        } else {
+            $coach_full_name = null;
+        }
+
+        foreach ($clients as $client) {
+            Mail::send('emails.notification', ['topic' => $form_data['topic'], 'text' => $form_data['text'], 'from_admin' => $from_admin, 'coach_full_name' => $coach_full_name], function ($message) use ($client, $form_data) {
+                $message->to($client->email);
+                $message->subject($form_data['topic']);
+            });
+        }
+
+        if (Auth::user()->role === 'coach') {
+            return redirect()->route('my_group_trainings_coach')->with('message', 'Paziņojums veiksmīgi nosūtīts!');
+        } else {
+            return redirect()->route('our_group_trainings')->with('message', 'Paziņojums veiksmīgi nosūtīts!');
+        }
     }
 }
