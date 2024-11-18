@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Carbon\Carbon;
 use App\Models\Coach;
 use App\Models\Client;
@@ -356,5 +357,70 @@ class GroupTrainingController extends Controller {
         } else {
             return redirect()->route('our_group_trainings')->with('message', 'Paziņojums veiksmīgi nosūtīts!');
         }
+    }
+
+    public function group_trainings_calendar() {
+
+        $events = array();
+        $group_trainings = GroupTraining::where('active', true)->get();
+        if (Auth::user()->role === 'client') {
+            $client_trainings = ClientTraining::where('client_id', Auth::user()->client_id)->pluck('training_id')->toArray();
+        }
+
+        foreach ($group_trainings as $group_training) {
+            $schedule = json_decode($group_training->schedule, true);
+
+            foreach ($schedule as $day => $times) {
+                // Add trainings to the calendar starting from the last week and up to 4 weeks ahead
+
+                $current_date = new DateTime();
+                $weekday = new DateTime();
+                $weekday->modify('last week');
+                $weekday->modify($day);
+
+                for ($i = 0; $i < 5; $i++) {
+                    $event = array();
+                    $event['title'] = $group_training->name;
+
+                    // Split the time string into hours and minutes
+                    list($start_hour, $start_minute) = explode(':', $times['start']);
+                    list($end_hour, $end_minute) = explode(':', $times['end']);
+
+                    $start_time = clone $weekday;
+                    $end_time = clone $weekday;
+                    $start_time->setTime($start_hour, $start_minute);
+                    $end_time->setTime($end_hour, $end_minute);
+                    $event['start'] = $start_time->format('Y-m-d\TH:i:s');
+                    $event['end'] = $end_time->format('Y-m-d\TH:i:s');
+                    $event['extendedProps'] = array();
+                    $event['extendedProps']['coach_id'] = $group_training->coach_id;
+                    if (in_array($group_training->training_id, $client_trainings)) {
+                        $event['extendedProps']['client_signed_up'] = true;
+                    } else {
+                        $event['extendedProps']['client_signed_up'] = false;
+                    }
+
+                    if ($start_time > $current_date) {
+                        $event['backgroundColor'] = "#007bff";
+                        $event['borderColor'] = "#007bff";
+                    } else if ($end_time < $current_date) {
+                        $event['backgroundColor'] = "#a9a9a9";
+                        $event['borderColor'] = "#a9a9a9";
+                    } else {
+                        $event['backgroundColor'] = "#50C878";
+                        $event['borderColor'] = "#50C878";
+                    }
+
+                    $events[] = $event;
+
+                    $weekday->modify('+1 week');
+                }
+            }
+        }
+
+
+        return view('user.group_trainings_calendar', [
+            'events' => json_encode($events)
+        ]);
     }
 }

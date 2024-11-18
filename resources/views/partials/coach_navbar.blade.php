@@ -5,4 +5,5 @@
     <a href="{{ route('my_group_trainings_coach') }}" class="hover:text-[#007BFF]">Manas grupu nodarbības</a>
     <a href="{{ route('create_new_group_training_page') }}" class="hover:text-[#007BFF]">Izveidot jaunu grupu nodarbības veidu</a>
     <a href="{{ route('our_memberships') }}" class="hover:text-[#007BFF]">Abonementu veidi</a>
+    <a href="{{ route('group_trainings_calendar') }}" class="hover:text-[#007BFF]">Grupu nodarbību kalendārs</a>
 </nav>

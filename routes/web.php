@@ -28,6 +28,9 @@ Route::middleware(['auth:client,coach,admin'])->group(function () {
 
     // Page with information about available memberships
     Route::get('/our_memberships', [MembershipController::class, 'our_memberships'])->name('our_memberships');
+
+    // Group trainings calendar
+    Route::get('/group_trainings_calendar', [GroupTrainingController::class, 'group_trainings_calendar'])->name('group_trainings_calendar');
 });
 
 // Routes for clients and coaches

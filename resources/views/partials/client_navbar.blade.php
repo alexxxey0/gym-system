@@ -4,4 +4,5 @@
     <a href="{{ route('our_coaches') }}" class="hover:text-[#007BFF]">Mūsu treneri</a>
     <a href="{{ route('our_group_trainings') }}" class="hover:text-[#007BFF]">Mūsu grupu nodarbības</a>
     <a href="{{ route('my_group_trainings_client') }}" class="hover:text-[#007BFF]">Manas grupu nodarbības</a>
+    <a href="{{ route('group_trainings_calendar') }}" class="hover:text-[#007BFF]">Grupu nodarbību kalendārs</a>
 </nav>
