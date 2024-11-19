@@ -10,7 +10,7 @@
 <body>
 
     @if (session('message'))
-        <div class='message fixed bottom-4 right-4 bg-[#50C878] text-white p-4 rounded-md flex flex-row gap-x-4 items-center shadow-md'>
+        <div class='message fixed bottom-4 right-4 bg-[#50C878] text-white p-4 rounded-md flex flex-row gap-x-4 items-center shadow-md z-50'>
             <i class="fa-solid fa-circle-info text-2xl"></i>
             <p class='text-lg'>{{ session('message') }}</p>
         </div>

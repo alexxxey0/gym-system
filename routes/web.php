@@ -70,8 +70,14 @@ Route::middleware('auth:coach,admin')->group(function () {
     // Send notification (action)
     Route::post('/send_notification', [GroupTrainingController::class, 'send_notification'])->name('send_notification');
 
-    // Cancel group training
-    Route::post('/cancel_group_training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
+    // Cancel group training type
+    Route::post('/cancel_group_training_type', [GroupTrainingController::class, 'cancel_group_training_type'])->name('cancel_group_training_type');
+
+    // Cancel single group training
+    Route::post('/cancel_group_Training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
+
+    // Restore single group training
+    Route::post('/restore_group_Training', [GroupTrainingController::class, 'restore_group_training'])->name('restore_group_training');
 });
 
 // Admin routes

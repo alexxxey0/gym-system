@@ -10,7 +10,7 @@ return new class extends Migration {
      */
     public function up(): void {
         Schema::create('client_training', function (Blueprint $table) {
-            $table->bigIncrements('record_id');
+            $table->bigIncrements('client_training_id');
             $table->unsignedBigInteger('client_id');
             $table->unsignedBigInteger('training_id');
             $table->timestamps();

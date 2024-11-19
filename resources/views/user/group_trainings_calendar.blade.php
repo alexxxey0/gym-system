@@ -4,6 +4,32 @@
 
 @section('content')
 
+    <style>
+        .fc-event {
+            cursor: pointer;
+        }
+
+        .canceled_training_bg_sm {
+            background: repeating-linear-gradient(
+                45deg,
+                #a9a9a9,
+                #a9a9a9 5px,
+                #ef4444 5px,
+                #ef4444 10px
+            );
+        }
+
+        .canceled_training_bg_lg {
+            background: repeating-linear-gradient(
+                45deg,
+                #a9a9a9,
+                #a9a9a9 10px,
+                #ef4444 10px,
+                #ef4444 20px
+            );
+        }
+    </style>
+
 
     <h1 class='text-center text-3xl font-bold mt-8'>Grupu nodarbību kalendārs</h1>
 
@@ -33,16 +59,72 @@
                 <div class='bg-[#007bff] w-[20px] h-[20px] rounded-sm'></div>
                 <span>Ieplānota nodarbība</span>
             </div>
+
+            <div class="flex flex-row gap-x-2 items-center">
+                <div class='canceled_training_bg_sm w-[20px] h-[20px] rounded-sm'></div>
+                <span>Atcelta nodarbība</span>
+            </div>
         </div>
 
         <div id='calendar' class=''></div>
+    </div>
+
+    <div id='overlay' class='hidden fixed w-full h-full top-0 bottom-0 left-0 right-0 bg-blue-300 z-40 opacity-50'></div>
+
+    <!-- Training info pop-up -->
+    <div id='training_popup' class='hidden rounded-lg p-16 bg-white fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50'>
+        <i class="fa-solid fa-xmark absolute top-4 right-4 text-2xl text-red-500 w-[20px] h-[20px] cursor-pointer" onclick="close_popup()"></i>
+        
+        <h1 class='text-center font-bold text-2xl mb-4'>Informācija par grupu nodarbību</h1>
+        <h1 id='training_name' class='font-bold text-lg'></h1>
+        <h2>Treneris/-e: <span id='training_coach'></span></h2>
+        <h2>Datums un laiks: <span id='training_time_and_date'></span></h2>
+        <h2 id='canceled_text' class='hidden text-center text-red-500 font-bold text-2xl mt-2'>Nodarbība ir atcelta!</h2>
+
+        <div id='training_actions' class='flex-row mt-4 hidden'>
+            <form action="{{ route('cancel_group_training') }}" method="POST" id='cancel_group_training_button'>
+                @csrf
+                <input type="hidden" name="training_id" class='training_id'>
+                <input type="hidden" name="training_date" class='training_date'>
+                <x-main_button type='submit' class='p-4 bg-red-500 active:bg-red-600'>Atcelt nodarbību</x-main_button>
+            </form>
+
+            <form action="{{ route('restore_group_training') }}" method="POST" id='restore_group_training_button' class='hidden'>
+                @csrf
+                <input type="hidden" name="training_id" class='training_id'>
+                <input type="hidden" name="training_date" class='training_date'>
+                <x-main_button type='submit' class='p-4 bg-[#50C878] active:bg-green-600'>Atjaunot nodarbību</x-main_button>
+            </form>
+        </div>
     </div>
 
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script>
 
         const events = {!! $events !!};
+        const is_admin = "{{ Auth::user()->role === 'admin' }}";
         const coach_id = {{ Auth::user()->coach_id ?? 0 }};
+        const overlay = document.querySelector('#overlay');
+        const training_popup = document.querySelector('#training_popup');
+        const training_name = document.querySelector('#training_name');
+        const training_coach = document.querySelector('#training_coach');
+        const training_time_and_date = document.querySelector('#training_time_and_date');
+        const training_actions = document.querySelector('#training_actions');
+        const training_ids = document.querySelectorAll('.training_id');
+        const training_dates = document.querySelectorAll('.training_date');
+        const cancel_group_training_button = document.querySelector('#cancel_group_training_button');
+        const canceled_text = document.querySelector('#canceled_text');
+        const restore_group_training_button = document.querySelector('#restore_group_training_button');
+
+        function close_popup() {
+            overlay.classList.add('hidden');
+            training_popup.classList.add('hidden');
+            training_actions.classList.remove('flex');
+            training_actions.classList.add('hidden');
+            cancel_group_training_button.classList.remove('hidden');
+            canceled_text.classList.add('hidden');
+            restore_group_training_button.classList.add('hidden');
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
@@ -68,48 +150,86 @@
                     hour12: false
                 },
                 slotEventOverlap: false,
-                slotDuration: "00:10:00"
+                slotDuration: "00:10:00",
+                eventMaxStack: 2,
+
+                eventClick: function(info) {
+                    overlay.classList.remove('hidden');
+                    training_popup.classList.remove('hidden');
+                    training_name.textContent = info.event.title;
+                    training_coach.textContent = info.event.extendedProps.coach_full_name;
+                    training_time_and_date.textContent = info.event.extendedProps.time_and_date;
+                    for (let i = 0; i < training_ids.length; i++) {
+                        training_ids[i].value = info.event.extendedProps.training_id;
+                    }
+                    for (let i = 0; i < training_dates.length; i++) {
+                        training_dates[i].value = info.event.extendedProps.training_date;
+                    }
+
+                    if (info.event.extendedProps.canceled) {
+                        canceled_text.classList.remove('hidden');
+                    }
+
+                    if (is_admin || coach_id == info.event.extendedProps.coach_id) {
+                        training_actions.classList.remove('hidden');
+                        training_actions.classList.add('flex');
+
+                        const training_start = new Date(info.event.start);
+                        const current_time = new Date();
+
+                        if (current_time > training_start || info.event.extendedProps.canceled) {
+                            cancel_group_training_button.classList.add('hidden');
+                            restore_group_training_button.classList.add('hidden');
+                        }
+
+                        if (info.event.extendedProps.canceled) {
+                            restore_group_training_button.classList.remove('hidden');
+                        }
+                    }
+                }
             });
 
             calendar.render();
 
             const trainings_displayed_selection = document.querySelector('#trainings_displayed');
 
-            trainings_displayed_selection.addEventListener('change', function() {
-                const calendar_events = calendar.getEvents();
-                if (this.value === 'my_trainings') {
+            if (trainings_displayed_selection !== null) {
+                trainings_displayed_selection.addEventListener('change', function() {
+                    const calendar_events = calendar.getEvents();
+                    if (this.value === 'my_trainings') {
 
-                    if (coach_id != 0) {
-                        // Remove trainings that are not hosted by the currently authenticated coach
-                        for (let i = 0; i < calendar_events.length; i++) {
-                            if (calendar_events[i].extendedProps.coach_id !== coach_id) {
-                                calendar_events[i].remove();
+                        if (coach_id != 0) {
+                            // Remove trainings that are not hosted by the currently authenticated coach
+                            for (let i = 0; i < calendar_events.length; i++) {
+                                if (calendar_events[i].extendedProps.coach_id !== coach_id) {
+                                    calendar_events[i].remove();
+                                }
+                            }
+                        } else {
+                            // Remove trainings that the currently authenticated client is not signed up to
+                            for (let i = 0; i < calendar_events.length; i++) {
+                                if (!calendar_events[i].extendedProps.client_signed_up) {
+                                    calendar_events[i].remove();
+                                }
                             }
                         }
+
                     } else {
-                        // Remove trainings that the currently authenticated client is not signed up to
+
+                        // Clear the calendar from all events
                         for (let i = 0; i < calendar_events.length; i++) {
-                            if (!calendar_events[i].extendedProps.client_signed_up) {
-                                calendar_events[i].remove();
-                            }
+                            calendar_events[i].remove();
                         }
+
+                        // Add all the events back to the calendar
+                        events.forEach((event) => {
+                            calendar.addEvent(event);
+                        });
                     }
 
-                } else {
-
-                    // Clear the calendar from all events
-                    for (let i = 0; i < calendar_events.length; i++) {
-                        calendar_events[i].remove();
-                    }
-
-                    // Add all the events back to the calendar
-                    events.forEach((event) => {
-                        calendar.addEvent(event);
-                    });
-                }
-
-                calendar.render();
-            });
+                    calendar.render();
+                });
+            }
 
         });
     </script>

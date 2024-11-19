@@ -4,20 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
-    public function up(): void {
-        Schema::create('attendance', function (Blueprint $table) {
-            $table->bigIncrements('attendance_id');
-            $table->unsignedBigInteger('client_id');
+    public function up(): void
+    {
+        Schema::create('canceled_trainings', function (Blueprint $table) {
+            $table->bigIncrements('canceled_training_id');
             $table->unsignedBigInteger('training_id');
             $table->date('training_date');
-            $table->boolean('attended');
             $table->timestamps();
 
-            $table->foreign('client_id')->references('client_id')->on('clients');
             $table->foreign('training_id')->references('training_id')->on('group_trainings');
         });
     }
@@ -25,7 +24,8 @@ return new class extends Migration {
     /**
      * Reverse the migrations.
      */
-    public function down(): void {
-        Schema::dropIfExists('attendance');
+    public function down(): void
+    {
+        Schema::dropIfExists('canceled_trainings');
     }
 };

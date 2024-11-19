@@ -40,7 +40,7 @@
                             <h2 class='text-red-600'><span class='font-bold text-black'>Pieteikušies: </span>{{ $group_training->clients_signed_up }} / {{ $group_training->max_clients}}</h2>
                         @endif
                         <x-main_link class='w-1/2 mr-auto' href="{{ route('edit_group_training_page', ['training_id' => $group_training->training_id]) }}">Rediģēt nodarbības informāciju</x-main_link>
-                        <form action="{{ route('cancel_group_training') }}" method="POST" onsubmit="return confirm_training_deletion(this);">
+                        <form action="{{ route('cancel_group_training_type') }}" method="POST" onsubmit="return confirm_training_deletion(this);">
                             @csrf
                             <input type="hidden" name="training_id" value="{{ $group_training->training_id }}">
                             <input type="hidden" name="training_name" value="{{ $group_training->name }}">

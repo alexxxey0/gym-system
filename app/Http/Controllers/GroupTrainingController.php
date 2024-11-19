@@ -13,6 +13,7 @@ use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 use App\Models\ClientTraining;
 use App\Http\Controllers\Controller;
+use App\Models\CanceledTraining;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
@@ -253,7 +254,7 @@ class GroupTrainingController extends Controller {
         return redirect()->back()->with('message', 'Nodarbības dati veiksmīgi rediģēti!');
     }
 
-    public function cancel_group_training(Request $request) {
+    public function cancel_group_training_type(Request $request) {
         $group_training = GroupTraining::where('training_id', $request->training_id)->first();
 
         if (Auth::user()->role === 'coach' and $group_training->coach_id !== Auth::user()->coach_id) {
@@ -365,10 +366,13 @@ class GroupTrainingController extends Controller {
         $group_trainings = GroupTraining::where('active', true)->get();
         if (Auth::user()->role === 'client') {
             $client_trainings = ClientTraining::where('client_id', Auth::user()->client_id)->pluck('training_id')->toArray();
+        } else {
+            $client_trainings = array();
         }
 
         foreach ($group_trainings as $group_training) {
             $schedule = json_decode($group_training->schedule, true);
+            $coach = Coach::where('coach_id', $group_training->coach_id)->first();
 
             foreach ($schedule as $day => $times) {
                 // Add trainings to the calendar starting from the last week and up to 4 weeks ahead
@@ -394,6 +398,19 @@ class GroupTrainingController extends Controller {
                     $event['end'] = $end_time->format('Y-m-d\TH:i:s');
                     $event['extendedProps'] = array();
                     $event['extendedProps']['coach_id'] = $group_training->coach_id;
+                    $event['extendedProps']['coach_full_name'] = $coach->name . " " . $coach->surname;
+                    $event['extendedProps']['time_and_date'] = $start_time->format('Y-m-d') . " " . $start_time->format('H:i') . "-" . $end_time->format('H:i');
+                    $event['extendedProps']['training_id'] = $group_training->training_id;
+                    $event['extendedProps']['training_date'] = $start_time->format('Y-m-d');
+
+                    $event['classNames'] = array();
+                    if (CanceledTraining::where('training_id', $group_training->training_id)->where('training_date', $start_time->format('Y-m-d'))->exists()) {
+                        $event['classNames'][] = 'canceled_training_bg_lg';
+                        $event['extendedProps']['canceled'] = true;
+                    } else {
+                        $event['extendedProps']['canceled'] = false;
+                    }
+
                     if (in_array($group_training->training_id, $client_trainings)) {
                         $event['extendedProps']['client_signed_up'] = true;
                     } else {
@@ -422,5 +439,32 @@ class GroupTrainingController extends Controller {
         return view('user.group_trainings_calendar', [
             'events' => json_encode($events)
         ]);
+    }
+
+    public function cancel_group_training(Request $request) {
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        if (Auth::user()->role === 'coach' and $group_training->coach_id !== Auth::user()->coach_id) {
+            return redirect()->back()->with('message', 'Kļūda: jums nav tiesību atcelt šo nodarbību!');
+        } else {
+            CanceledTraining::create([
+                'training_id' => $request->training_id,
+                'training_date' => $request->training_date
+            ]);
+
+            return redirect()->back()->with('message', 'Nodarbība veiksmīgi atcelta!');
+        }
+    }
+
+    public function restore_group_training(Request $request) {
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        if (Auth::user()->role === 'coach' and $group_training->coach_id !== Auth::user()->coach_id) {
+            return redirect()->back()->with('message', 'Kļūda: jums nav tiesību atjaunot šo nodarbību!');
+        } else {
+            CanceledTraining::where('training_id', $request->training_id)->where('training_date', $request->training_date)->delete();
+
+            return redirect()->back()->with('message', 'Nodarbība veiksmīgi atjaunota!');
+        }
     }
 }
