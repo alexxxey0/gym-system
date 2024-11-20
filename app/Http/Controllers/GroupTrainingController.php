@@ -452,6 +452,17 @@ class GroupTrainingController extends Controller {
                 'training_date' => $request->training_date
             ]);
 
+            // Send a notification to all the clients who are signed up to this training
+            $clients_ids = ClientTraining::where('training_id', $group_training->training_id)->pluck('client_id')->toArray();
+            $clients = Client::whereIn('client_id', $clients_ids)->get();
+
+            foreach ($clients as $client) {
+                Mail::send('emails.client.training_canceled', ['training_name' => $group_training->name, 'training_date' => $request->training_date], function ($message) use ($client, $group_training) {
+                    $message->to($client->email);
+                    $message->subject('Atcelta nodarbība: ' . $group_training->name);
+                });
+            }
+
             return redirect()->back()->with('message', 'Nodarbība veiksmīgi atcelta!');
         }
     }
@@ -463,6 +474,17 @@ class GroupTrainingController extends Controller {
             return redirect()->back()->with('message', 'Kļūda: jums nav tiesību atjaunot šo nodarbību!');
         } else {
             CanceledTraining::where('training_id', $request->training_id)->where('training_date', $request->training_date)->delete();
+
+            // Send a notification to all the clients who are signed up to this training
+            $clients_ids = ClientTraining::where('training_id', $group_training->training_id)->pluck('client_id')->toArray();
+            $clients = Client::whereIn('client_id', $clients_ids)->get();
+
+            foreach ($clients as $client) {
+                Mail::send('emails.client.training_restored', ['training_name' => $group_training->name, 'training_date' => $request->training_date], function ($message) use ($client, $group_training) {
+                    $message->to($client->email);
+                    $message->subject('Atjaunota nodarbība: ' . $group_training->name);
+                });
+            }
 
             return redirect()->back()->with('message', 'Nodarbība veiksmīgi atjaunota!');
         }
