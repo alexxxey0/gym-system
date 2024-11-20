@@ -85,7 +85,7 @@ class RegistrationController extends Controller {
             'surname' => $form_data['surname'],
             'personal_id' => $form_data['personal_id'],
             'password' => Hash::make($temporary_password),
-            'phone' => '+371' . $form_data['phone'],
+            'phone' => $form_data['phone'],
             'email' => $form_data['email'],
             'role' => 'client',
             'membership_id' => $membership_id,
@@ -155,7 +155,7 @@ class RegistrationController extends Controller {
             'surname' => $form_data['surname'],
             'personal_id' => $form_data['personal_id'],
             'password' => Hash::make($temporary_password),
-            'phone' => '+371' . $form_data['phone'],
+            'phone' => $form_data['phone'],
             'email' => $form_data['email'],
             'role' => 'coach'
         ]);
