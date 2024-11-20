@@ -23,7 +23,7 @@ class CoachFactory extends Factory {
                 $this->faker->unique()->numberBetween(0, 99999)
             ),
             'password' => bcrypt($this->faker->password),
-            'phone' => $this->faker->unique()->phoneNumber,
+            'phone' => $this->faker->unique()->numerify('########'),
             'email' => $this->faker->unique()->safeEmail,
             'role' => 'coach'
         ];

@@ -44,7 +44,10 @@
 
         <div>
             <h2 class="font-bold">Telefona numurs</h2>
-            <input type="text" name='phone' maxlength="20" value="{{ old('phone') ?? $client->phone }}" class='rounded-md' required>
+            <div class='flex flex-row gap-x-2'>
+                <input type="text" value="+371" class='w-2/12 rounded-md' disabled>
+                <input type="text" required maxlength="8" class='rounded-md w-10/12' name='phone' value="{{ old('phone') ?? $client->phone }}">
+            </div>
         </div>
         @if ($errors->has('phone'))
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('phone') }}</div>

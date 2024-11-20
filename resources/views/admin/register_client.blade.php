@@ -38,7 +38,10 @@
 
         <div class='flex flex-col'>
             <label for="phone">Telefona numurs</label>
-            <input type="text" required maxlength="20" class='rounded-md' name='phone' value="{{ old('phone') }}">
+            <div class='flex flex-row gap-x-2'>
+                <input type="text" value="+371" class='w-2/12 rounded-md' disabled>
+                <input type="text" required maxlength="8" class='rounded-md w-10/12' name='phone' value="{{ old('phone') }}">
+            </div>
         </div>
 
         @if ($errors->has('phone'))

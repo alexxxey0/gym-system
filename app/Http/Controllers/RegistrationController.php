@@ -64,8 +64,8 @@ class RegistrationController extends Controller {
             'name' => ['required', 'max:30'],
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:clients'],
-            'phone' => ['required', 'max:20', 'unique:clients'],
-            'email' => ['required', 'max:50', 'unique:clients']
+            'phone' => ['required', 'unique:clients', 'regex:/^\d{8}$/'],
+            'email' => ['required', 'max:50', 'unique:clients', 'email']
         ], $error_messages);
 
         $temporary_password = Str::random(10);
@@ -85,7 +85,7 @@ class RegistrationController extends Controller {
             'surname' => $form_data['surname'],
             'personal_id' => $form_data['personal_id'],
             'password' => Hash::make($temporary_password),
-            'phone' => $form_data['phone'],
+            'phone' => '+371' . $form_data['phone'],
             'email' => $form_data['email'],
             'role' => 'client',
             'membership_id' => $membership_id,
@@ -144,8 +144,8 @@ class RegistrationController extends Controller {
             'name' => ['required', 'max:30'],
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:coaches'],
-            'phone' => ['required', 'max:20', 'unique:coaches'],
-            'email' => ['required', 'max:50', 'unique:coaches']
+            'phone' => ['required', 'unique:coaches', 'regex:/^\d{8}$/'],
+            'email' => ['required', 'max:50', 'unique:coaches', 'email']
         ], $error_messages);
 
         $temporary_password = Str::random(10);
@@ -155,7 +155,7 @@ class RegistrationController extends Controller {
             'surname' => $form_data['surname'],
             'personal_id' => $form_data['personal_id'],
             'password' => Hash::make($temporary_password),
-            'phone' => $form_data['phone'],
+            'phone' => '+371' . $form_data['phone'],
             'email' => $form_data['email'],
             'role' => 'coach'
         ]);

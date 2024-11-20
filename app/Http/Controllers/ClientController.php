@@ -88,8 +88,8 @@ class ClientController extends Controller {
             'name' => ['required', 'max:30'],
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:clients,personal_id,' . $client->client_id . ',client_id'],
-            'phone' => ['required', 'max:20', 'unique:clients,phone,' . $client->client_id . ',client_id'],
-            'email' => ['required', 'max:50', 'unique:clients,email,' . $client->client_id . ',client_id']
+            'phone' => ['required', 'unique:clients,phone,' . $client->client_id . ',client_id', 'regex:/^\d{8}$/'],
+            'email' => ['required', 'max:50', 'unique:clients,email,' . $client->client_id . ',client_id', 'email']
         ], $error_messages);
 
         $client->update([
@@ -102,5 +102,4 @@ class ClientController extends Controller {
 
         return redirect()->back()->with('message', 'Klienta dati veiksmīgi rediģēti!');
     }
-
 }

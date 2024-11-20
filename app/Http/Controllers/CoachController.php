@@ -67,8 +67,8 @@ class CoachController extends Controller {
             'name' => ['required', 'max:30'],
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:coaches,personal_id,' . $coach->coach_id . ',coach_id'],
-            'phone' => ['required', 'max:20', 'unique:coaches,phone,' . $coach->coach_id . ',coach_id'],
-            'email' => ['required', 'max:50', 'unique:coaches,email,' . $coach->coach_id . ',coach_id']
+            'phone' => ['required', 'max:20', 'unique:coaches,phone,' . $coach->coach_id . ',coach_id', 'regex:/^\d{8}$/'],
+            'email' => ['required', 'max:50', 'unique:coaches,email,' . $coach->coach_id . ',coach_id', 'email']
         ], $error_messages);
 
         $coach->update([

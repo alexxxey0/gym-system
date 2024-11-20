@@ -30,7 +30,7 @@ class ClientFactory extends Factory {
                 $this->faker->unique()->numberBetween(0, 99999)
             ),
             'password' => bcrypt($this->faker->password),
-            'phone' => $this->faker->unique()->phoneNumber,
+            'phone' => $this->faker->unique()->numerify('########'),
             'email' => $this->faker->unique()->safeEmail,
             'membership_id' => $this->faker->randomElement($memberships_ids),
             'membership_until' => $this->faker->dateTimeBetween(now(), now()->addMonth()),
