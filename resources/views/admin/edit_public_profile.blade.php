@@ -30,7 +30,10 @@
 
             <div>
                 <label for="contact_phone">Kontakttelefons</label>
-                <input type="text" name='contact_phone' class='rounded-md' id='contact_phone' maxlength="20">
+                <div class='flex flex-row gap-x-2'>
+                    <input type="text" value="+371" class='w-2/12 rounded-md' disabled>
+                    <input type="text" required maxlength="8" class='rounded-md w-10/12' name='contact_phone' id='contact_phone'>
+                </div>
             </div>
             @if ($errors->has('contact_phone'))
                 <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('contact_phone') }}</div>

@@ -91,14 +91,6 @@ class CoachController extends Controller {
     }
 
     public function edit_public_profile(Request $request) {
-        if (isset(Auth::user()->coach_id)) {
-            $coach_id = Auth::user()->coach_id;
-        } else {
-            $coach_id = $request->coach_id;
-        }
-
-        $coach = Coach::where('coach_id', $coach_id)->first();
-
         $messages = [
             'personal_description.max' => 'Personiskais apraksts nevar būt garāk par 2000 simboliem!',
             'contact_phone.max' => 'Kontakttelefons nevar būt garāks par 20 simboliem!',
@@ -109,8 +101,8 @@ class CoachController extends Controller {
 
         $form_data = $request->validate([
             'personal_description' => ['max:2000'],
-            'contact_phone' => ['max:20'],
-            'contact_email' => ['max:50'],
+            'contact_phone' => ['regex:/^\d{8}$/'],
+            'contact_email' => ['max:50', 'email'],
             'profile_picture' => ['image', 'max:5000', 'nullable']
         ], $messages);
 
@@ -119,6 +111,14 @@ class CoachController extends Controller {
             $profile_picture = $request->file('profile_picture');
             $path = $profile_picture->store('coaches_profile_pictures', 'public');
         }
+
+        if (isset(Auth::user()->coach_id)) {
+            $coach_id = Auth::user()->coach_id;
+        } else {
+            $coach_id = $request->coach_id;
+        }
+
+        $coach = Coach::where('coach_id', $coach_id)->first();
 
         $coach->update([
             'personal_description' => $form_data['personal_description'],
