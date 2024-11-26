@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Coach;
 use App\Models\Client;
 use App\Models\Membership;
@@ -15,17 +16,31 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller {
 
-    public function user_profile_page() {
+    public function user_profile_page(Request $request) {
         $user = Auth::user();
+        $membership_expired = false;
 
         if ($user->role === 'client') {
             $membership_id = $user->membership_id;
             $membership_name = Membership::select('membership_name')->where('membership_id', $membership_id)->value('membership_name');
             $user['membership_name'] = $membership_name;
+
+            if (isset($user->membership_until) and Carbon::parse($user->membership_until)->isPast()) {
+                $membership_expired = true;
+            }
+        }
+
+        if (isset($request->payment_completed)) {
+            return view('user.user_profile', [
+                'user' => $user,
+                'membership_expired' => $membership_expired,
+                'message' => 'Jūsu abonements veiksmīgi pagarināts!'
+            ]);
         }
 
         return view('user.user_profile', [
-            'user' => $user
+            'user' => $user,
+            'membership_expired' => $membership_expired
         ]);
     }
 

@@ -43,8 +43,13 @@
                     <h2>{{ $user->membership_name ?? 'Nav' }}</h2>
                 </div>
                 <div>
-                    <h2 class="font-bold">Abonements derīgs līdz:</h2>
-                    <h2>{{ $user->membership_until ?? 'Nav' }}</h2>
+                    @if (!$membership_expired)
+                        <h2 class="font-bold">Abonements derīgs līdz:</h2>
+                        <h2>{{ $user->membership_until ?? 'Nav' }}</h2>
+                    @else
+                        <h2 class="font-bold">Abonements derīgs līdz:</h2>
+                        <h2 class='text-red-500'>{{ $user->membership_until}} (Abonements ir beidzies!)</h2>
+                    @endif
                 </div>
             @endif
             <div>
@@ -84,6 +89,10 @@
 
             @if (Auth::user()->role === 'coach')
                 <a href="{{ route('edit_public_profile_coach_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt mana publiskā profila datus</a>
+            @endif
+
+            @if ($membership_expired)
+                <a href="{{ route('extend_my_membership_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Pagarināt manu abonementu</a>
             @endif
         </div>
 

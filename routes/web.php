@@ -44,6 +44,7 @@ Route::middleware(['auth:client,coach'])->group(function () {
 
     // User's own profile page
     Route::get('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
+    Route::post('/my_profile', [UserController::class, 'user_profile_page'])->name('user_profile_page');
 
     // "Our coaches" page
     Route::get('/our_coaches', [CoachController::class, 'our_coaches_page'])->name('our_coaches');
@@ -171,6 +172,15 @@ Route::middleware(['auth:client'])->group(function () {
 
     // Client's group trainings
     Route::get('/my_group_trainings_client', [GroupTrainingController::class, 'my_group_trainings_client'])->name('my_group_trainings_client');
+
+    // Extend membership page
+    Route::get('/extend_my_membership', [MembershipController::class, 'extend_my_membership_page'])->name('extend_my_membership_page');
+
+    // Get client secret (needed to make a payment)
+    Route::post('/get_client_secret', [MembershipController::class, 'get_client_secret'])->name('get_client_secret');
+
+    // Extend client's membership (action)
+    Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
 
     // Client's logout
     Route::post('/logout_client', function () {

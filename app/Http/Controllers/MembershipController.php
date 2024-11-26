@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use Stripe\Stripe;
 use App\Models\Client;
 use App\Models\Payment;
+use Stripe\PaymentIntent;
 use App\Models\Membership;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 class MembershipController extends Controller {
 
@@ -34,6 +38,9 @@ class MembershipController extends Controller {
     }
 
     public function extend_client_membership(Request $request) {
+        if (Auth::user()->role === 'client' and $request->status !== 'succeeded') {
+            return redirect()->back()->with('message', 'Kļūda: maksājums neizdevās!');
+        }
 
         $client = Client::where('client_id', $request->client_id)->first();
         $membership_id = Membership::select('membership_id')->where('membership_name', $request->membership_name)->value('membership_id');
@@ -56,7 +63,10 @@ class MembershipController extends Controller {
             'completed_at' => now()
         ]);
 
-        return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi pagarināts!');
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi pagarināts!');
+        }
+        return redirect()->route('user_profile_page')->with('message', 'Abonements veiksmīgi pagarināts!');
     }
 
     public function change_membership_page(Request $request) {
@@ -124,9 +134,47 @@ class MembershipController extends Controller {
 
     public function our_memberships() {
         $memberships = Membership::all();
-        
+
         return view('user.our_memberships', [
             'memberships' => $memberships
         ]);
+    }
+
+
+    public function extend_my_membership_page() {
+        $memberships = Membership::all();
+
+        $memberships_prices = array();
+        foreach ($memberships as $membership) {
+            $memberships_prices[$membership->membership_name] = $membership->price;
+        }
+
+        return view('client.extend_my_membership', [
+            'memberships' => $memberships,
+            'memberships_prices' => json_encode($memberships_prices)
+        ]);
+    }
+
+    public function get_client_secret(Request $request) {
+
+        $request->validate([
+            'amount' => 'required|numeric',
+        ]);
+
+        try {
+            Stripe::setApiKey(config('services.stripe.secret'));
+
+            $paymentIntent = PaymentIntent::create([
+                'amount' => intval($request->amount * 100), // Amount in euro cents
+                'currency' => 'eur',
+                'payment_method_types' => ['card'],
+            ]);
+
+            return response()->json([
+                'clientSecret' => $paymentIntent->client_secret,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
