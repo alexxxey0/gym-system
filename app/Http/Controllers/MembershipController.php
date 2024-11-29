@@ -93,6 +93,10 @@ class MembershipController extends Controller {
     }
 
     public function change_client_membership(Request $request) {
+        if (Auth::user()->role === 'client' and $request->status !== 'succeeded') {
+            return redirect()->back()->with('message', 'Kļūda: maksājums neizdevās!');
+        }
+
         $client = Client::where('client_id', $request->client_id)->first();
         $membership_id = Membership::select('membership_id')->where('membership_name', $request->membership_name)->value('membership_id');
         $membership_price = Membership::select('price')->where('membership_name', $request->membership_name)->value('price');
@@ -118,7 +122,10 @@ class MembershipController extends Controller {
             ]);
         }
 
-        return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi pagarināts!');
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('view_client_profile', ['client_id' => $request->client_id])->with('message', 'Klienta abonements veiksmīgi pagarināts!');
+        }
+        return redirect()->route('user_profile_page')->with("message", "Abonements veiksmīgi uzlabots līdz $request->membership_name!");
     }
 
     public function nullify_client_membership(Request $request) {
@@ -176,5 +183,28 @@ class MembershipController extends Controller {
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    public function upgrade_my_membership_page() {
+        $user_membership_price = Membership::select('price')->where('membership_id', Auth::user()->membership_id)->value('price');
+
+        // Select only the memberships that are more expensive than the current user's membership
+        $memberships = Membership::where('price', '>', $user_membership_price)->get();
+        $more_expensive_memberships = array();
+        foreach ($memberships as $membership) {
+            if (floatval($membership->price) > floatval($user_membership_price)) $more_expensive_memberships[] = $membership;
+        }
+
+        $memberships_prices = array();
+        foreach ($memberships as $membership) {
+            $memberships_prices[$membership->membership_name] = $membership->price;
+        }
+
+        return view('client.upgrade_my_membership', [
+            'memberships' => $memberships,
+            'memberships_prices' => json_encode($memberships_prices),
+            'more_expensive_memberships' => $more_expensive_memberships,
+            'user_membership_price' => $user_membership_price
+        ]);
     }
 }

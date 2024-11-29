@@ -18,29 +18,38 @@ class UserController extends Controller {
 
     public function user_profile_page(Request $request) {
         $user = Auth::user();
-        $membership_expired = false;
+        $membership_expired = null;
+        $can_upgrade_membership = null;
 
         if ($user->role === 'client') {
             $membership_id = $user->membership_id;
+
+            $has_most_expensive_membership = null;
+            $most_expensive_membership_price = Membership::max('price');
+            $membership_price = Membership::select('price')->where('membership_id', $membership_id)->value('price');
+            $has_most_expensive_membership = $membership_price === $most_expensive_membership_price;
+
             $membership_name = Membership::select('membership_name')->where('membership_id', $membership_id)->value('membership_name');
             $user['membership_name'] = $membership_name;
 
             if (isset($user->membership_until) and Carbon::parse($user->membership_until)->isPast()) {
                 $membership_expired = true;
             }
+            if (isset($user->membership_until) and !Carbon::parse($user->membership_until)->isPast() and !$has_most_expensive_membership) {
+                $can_upgrade_membership = true;
+            }
         }
 
+        $message = null;
         if (isset($request->payment_completed)) {
-            return view('user.user_profile', [
-                'user' => $user,
-                'membership_expired' => $membership_expired,
-                'message' => 'Jūsu abonements veiksmīgi pagarināts!'
-            ]);
+            $message = 'Jūsu abonements veiksmīgi pagarināts!';
         }
 
         return view('user.user_profile', [
             'user' => $user,
-            'membership_expired' => $membership_expired
+            'membership_expired' => $membership_expired,
+            'can_upgrade_membership' => $can_upgrade_membership,
+            'message' => $message
         ]);
     }
 

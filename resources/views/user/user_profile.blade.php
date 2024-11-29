@@ -91,8 +91,12 @@
                 <a href="{{ route('edit_public_profile_coach_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Rediģēt mana publiskā profila datus</a>
             @endif
 
-            @if ($membership_expired)
+            @if (isset($membership_expired))
                 <a href="{{ route('extend_my_membership_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Pagarināt manu abonementu</a>
+            @endif
+
+            @if (isset($can_upgrade_membership))
+                <a href="{{ route('upgrade_my_membership_page') }}" class='mt-8 bg-[#007BFF] active:bg-[#0056b3] text-white p-4 rounded-md text-center text-xl'>Uzlabot manu abonementu</a>
             @endif
         </div>
 

@@ -182,6 +182,12 @@ Route::middleware(['auth:client'])->group(function () {
     // Extend client's membership (action)
     Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
 
+    // Upgrade membership page
+    Route::get('/upgrade_my_membership_page', [MembershipController::class, 'upgrade_my_membership_page'])->name('upgrade_my_membership_page');
+
+    // Change client's membership (action)
+    Route::post('/change_client_membership', [MembershipController::class, 'change_client_membership'])->name('change_client_membership');
+
     // Client's logout
     Route::post('/logout_client', function () {
         Auth::guard('client')->logout();
