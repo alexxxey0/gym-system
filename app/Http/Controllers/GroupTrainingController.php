@@ -541,7 +541,7 @@ class GroupTrainingController extends Controller {
                 if ($request['attended_client_' . $client_id] === 'yes') $attended = true;
                 else $attended = false;
 
-                $attendance = Attendance::where('training_id', $request->training_id)->where('training_date', $training_date)->where('client_id', $client_id);
+                $attendance = Attendance::where('training_id', $request->training_id)->where('training_date', $request->training_date)->where('client_id', $client_id);
                 $attendance->update([
                     'attended' => $attended
                 ]);
