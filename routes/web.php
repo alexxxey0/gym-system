@@ -75,10 +75,16 @@ Route::middleware('auth:coach,admin')->group(function () {
     Route::post('/cancel_group_training_type', [GroupTrainingController::class, 'cancel_group_training_type'])->name('cancel_group_training_type');
 
     // Cancel single group training
-    Route::post('/cancel_group_Training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
+    Route::post('/cancel_group_training', [GroupTrainingController::class, 'cancel_group_training'])->name('cancel_group_training');
 
     // Restore single group training
-    Route::post('/restore_group_Training', [GroupTrainingController::class, 'restore_group_training'])->name('restore_group_training');
+    Route::post('/restore_group_training', [GroupTrainingController::class, 'restore_group_training'])->name('restore_group_training');
+
+    // Mark group training attendance page
+    Route::post('/mark_attendance', [GroupTrainingController::class, 'mark_attendance_page'])->name('mark_attendance_page');
+
+    // Save group training attendance
+    Route::post('/save_attendance', [GroupTrainingController::class, 'save_attendance'])->name('save_attendance');
 });
 
 // Admin routes

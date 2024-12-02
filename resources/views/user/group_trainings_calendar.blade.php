@@ -81,7 +81,7 @@
         <h2>Datums un laiks: <span id='training_time_and_date'></span></h2>
         <h2 id='canceled_text' class='hidden text-center text-red-500 font-bold text-2xl mt-2'>Nodarbība ir atcelta!</h2>
 
-        <div id='training_actions' class='flex-row mt-4 hidden'>
+        <div id='training_actions' class='flex-col gap-y-2 mt-4 hidden'>
             <form action="{{ route('cancel_group_training') }}" method="POST" id='cancel_group_training_button'>
                 @csrf
                 <input type="hidden" name="training_id" class='training_id'>
@@ -94,6 +94,13 @@
                 <input type="hidden" name="training_id" class='training_id'>
                 <input type="hidden" name="training_date" class='training_date'>
                 <x-main_button type='submit' class='p-4 bg-[#50C878] active:bg-green-600'>Atjaunot nodarbību</x-main_button>
+            </form>
+
+            <form action="{{ route('mark_attendance_page') }}" method="POST" id='mark_attendance_button' class='hidden'>
+                @csrf
+                <input type="hidden" name="training_id" class='training_id'>
+                <input type="hidden" name="training_date" class='training_date'>
+                <x-main_button type='submit' class='p-4'>Atzīmēt nodarbības apmeklējumu</x-main_button>
             </form>
         </div>
     </div>
@@ -115,6 +122,7 @@
         const cancel_group_training_button = document.querySelector('#cancel_group_training_button');
         const canceled_text = document.querySelector('#canceled_text');
         const restore_group_training_button = document.querySelector('#restore_group_training_button');
+        const mark_attendance_button = document.querySelector('#mark_attendance_button');
 
         function close_popup() {
             overlay.classList.add('hidden');
@@ -124,6 +132,7 @@
             cancel_group_training_button.classList.remove('hidden');
             canceled_text.classList.add('hidden');
             restore_group_training_button.classList.add('hidden');
+            mark_attendance_button.classList.add('hidden');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -170,12 +179,18 @@
                         canceled_text.classList.remove('hidden');
                     }
 
+                    // Display buttons if the user has permission to manage this training (is admin or is the coach who created this training)
                     if (is_admin || coach_id == info.event.extendedProps.coach_id) {
                         training_actions.classList.remove('hidden');
                         training_actions.classList.add('flex');
 
                         const training_start = new Date(info.event.start);
                         const current_time = new Date();
+
+                        // Show "Mark attendance" button only if the training has already started and has at least one client
+                        if (current_time > training_start && Number(info.event.extendedProps.clients_count) > 0) {
+                            mark_attendance_button.classList.remove('hidden');
+                        }
 
                         if (current_time > training_start || info.event.extendedProps.canceled) {
                             cancel_group_training_button.classList.add('hidden');

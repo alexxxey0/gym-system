@@ -13,6 +13,7 @@ use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 use App\Models\ClientTraining;
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 use App\Models\CanceledTraining;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -373,6 +374,7 @@ class GroupTrainingController extends Controller {
         foreach ($group_trainings as $group_training) {
             $schedule = json_decode($group_training->schedule, true);
             $coach = Coach::where('coach_id', $group_training->coach_id)->first();
+            $clients_count = count(ClientTraining::where('training_id', $group_training->training_id)->get()->toArray());
 
             foreach ($schedule as $day => $times) {
                 // Add trainings to the calendar starting from the last week and up to 4 weeks ahead
@@ -402,6 +404,7 @@ class GroupTrainingController extends Controller {
                     $event['extendedProps']['time_and_date'] = $start_time->format('Y-m-d') . " " . $start_time->format('H:i') . "-" . $end_time->format('H:i');
                     $event['extendedProps']['training_id'] = $group_training->training_id;
                     $event['extendedProps']['training_date'] = $start_time->format('Y-m-d');
+                    $event['extendedProps']['clients_count'] = $clients_count;
 
                     $event['classNames'] = array();
                     if (CanceledTraining::where('training_id', $group_training->training_id)->where('training_date', $start_time->format('Y-m-d'))->exists()) {
@@ -488,5 +491,63 @@ class GroupTrainingController extends Controller {
 
             return redirect()->back()->with('message', 'Nodarbība veiksmīgi atjaunota!');
         }
+    }
+
+    public function mark_attendance_page(Request $request) {
+        $clients_ids = ClientTraining::select('client_id')->where('training_id', $request->training_id)->pluck('client_id')->toArray();
+        $clients = Client::whereIn('client_id', $clients_ids)->orderBy('surname', 'ASC')->get();
+        $group_training = GroupTraining::where('training_id', $request->training_id)->first();
+
+        $attendance = Attendance::where('training_id', $request->training_id)->where('training_date', $request->training_date)->get();
+        $clients_attendance = array();
+        if (count($attendance) > 0) {
+            foreach ($attendance as $attendant) {
+                $clients_attendance[$attendant->client_id] = $attendant->attended;
+            }
+        }
+
+
+        return view('coach.mark_attendance', [
+            'clients' => $clients,
+            'group_training' => $group_training,
+            'group_training_date' => $request->training_date,
+            'clients_attendance' => $clients_attendance
+        ]);
+    }
+
+    public function save_attendance(Request $request) {
+        $training = GroupTraining::where('training_id', $request->training_id)->first();
+        if (Auth::user()->role === 'coach' and $training->coach_id !== Auth::user()->coach_id) {
+            return redirect()->back()->with('message', 'Kļūda! Jums nav tiesību atzīmēt apmeklējumu šai nodarbībai');
+        }
+
+        $attendance_exists = Attendance::where('training_id', $request->training_id)->where('training_date', $request->training_date)->exists();
+        $clients_ids = ClientTraining::select('client_id')->where('training_id', $request->training_id)->pluck('client_id')->toArray();
+
+        if (!$attendance_exists) {
+            foreach ($clients_ids as $client_id) {
+                if ($request['attended_client_' . $client_id] === 'yes') $attended = true;
+                else $attended = false;
+
+                Attendance::create([
+                    'client_id' => $client_id,
+                    'training_id' => $request->training_id,
+                    'training_date' => $request->training_date,
+                    'attended' => $attended,
+                ]);
+            }
+        } else {
+            foreach ($clients_ids as $client_id) {
+                if ($request['attended_client_' . $client_id] === 'yes') $attended = true;
+                else $attended = false;
+
+                $attendance = Attendance::where('training_id', $request->training_id)->where('training_date', $training_date)->where('client_id', $client_id);
+                $attendance->update([
+                    'attended' => $attended
+                ]);
+            }
+        }
+
+        return redirect()->route('group_trainings_calendar')->with('message', 'Informācija par nodarbības apmeklējumu veiksmīgi saglabāta!');
     }
 }
