@@ -7,11 +7,11 @@
 
     <div class='mt-8 w-9/12 mx-auto'>
         <div class='mb-8 flex flex-row justify-around'>
-            <div class='w-1/3'>
+            <div class='w-1/3 shadow-lg p-4 rounded-xl'>
                 <h2 class='text-center font-bold text-xl mb-2'>Klientu sadalījums pēc abonementa veida</h2>
                 <canvas id='memberships_distribution_chart'></canvas>
             </div>
-            <div>
+            <div class='shadow-lg p-4 rounded-xl'>
                 <h2 class='text-center font-bold text-xl mb-2'>Ienākumi par periodu</h2>
                 <div class='flex flex-row gap-x-4'>
                     <div class='flex flex-row gap-x-2 items-center'>
