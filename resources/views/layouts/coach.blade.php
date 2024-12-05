@@ -21,7 +21,7 @@
     @include('partials.header')
 
     <!-- Main Content and Navbar -->
-    <div class='flex flex-row h-full'>
+    <div class='flex flex-col h-full'>
         @include('partials.coach_navbar')
         <div class="container mx-auto">
             @yield('content')
