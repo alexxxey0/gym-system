@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MembershipController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\GroupTrainingController;
+use App\Http\Controllers\StatisticsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -153,6 +154,9 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // Nullify client's membership (action)
     Route::post('/nullify_client_membership', [MembershipController::class, 'nullify_client_membership'])->name('nullify_client_membership');
+
+    // Gym statistics page
+    Route::get('/gym_statistics', [StatisticsController::class, 'gym_statistics_page'])->name('gym_statistics');
 
     // Admin's logout
     Route::post('/logout_admin', function () {
