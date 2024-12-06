@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Coach;
 use App\Models\Client;
 use App\Models\Payment;
 use App\Models\Membership;
 use Illuminate\Http\Request;
+use App\Models\GroupTraining;
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
 
 class StatisticsController extends Controller {
     public function gym_statistics_page() {
@@ -91,10 +94,18 @@ class StatisticsController extends Controller {
             }
         }
 
+        $clients_count = Client::count();
+        $coaches_count = Coach::count();
+        $active_group_trainings_count = GroupTraining::where('active', true)->count();
+        $avg_group_training_attendance = round((Attendance::where('attended', true)->count() / Attendance::count()) * 100, 2);
 
         return view('admin.gym_statistics', [
             'memberships_distribution' => json_encode($memberships_distribution),
-            'payments_data' => json_encode($payments_data)
+            'payments_data' => json_encode($payments_data),
+            'clients_count' => $clients_count,
+            'coaches_count' => $coaches_count,
+            'active_group_trainings_count' => $active_group_trainings_count,
+            'avg_group_training_attendance' => $avg_group_training_attendance
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Attendance;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -17,7 +18,8 @@ class DatabaseSeeder extends Seeder {
             ClientSeeder::class,
             CoachSeeder::class,
             GroupTrainingSeeder::class,
-            PaymentSeeder::class
+            PaymentSeeder::class,
+            AttendanceSeeder::class
         ]);
     }
 }
