@@ -2,21 +2,20 @@
 
 namespace Database\Factories;
 
+use App\Models\Gym;
 use App\Models\Coach;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\GroupTraining>
  */
-class GroupTrainingFactory extends Factory
-{
+class GroupTrainingFactory extends Factory {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array {
         // Random schedules
         $schedules = [
             ["monday" => ["start" => "09:30", "end" => "10:45"], "tuesday" => ["start" => "13:15", "end" => "14:45"], "thursday" => ["start" => "15:00", "end" => "16:30"]],
@@ -32,7 +31,7 @@ class GroupTrainingFactory extends Factory
         ];
 
         $coaches_ids = Coach::pluck('coach_id')->toArray();
-        
+        $gyms_ids = Gym::pluck('gym_id')->toArray();
 
         return [
             'name' => $this->faker->word(),
@@ -42,7 +41,8 @@ class GroupTrainingFactory extends Factory
             'clients_signed_up' => 0,
             'max_clients' => $this->faker->numberBetween(10, 50),
             'path_to_image' => null,
-            'active' => true
+            'active' => true,
+            'gym_id' => $this->faker->randomElement($gyms_ids)
         ];
     }
 }

@@ -21,9 +21,11 @@ return new class extends Migration
             $table->tinyInteger('max_clients', unsigned: true);
             $table->string('path_to_image', 100)->nullable();
             $table->boolean('active')->default(true);
+            $table->unsignedBigInteger('gym_id');
             $table->timestamps();
 
             $table->foreign('coach_id')->references('coach_id')->on('coaches');
+            $table->foreign('gym_id')->references('gym_id')->on('gyms');
         });
     }
 

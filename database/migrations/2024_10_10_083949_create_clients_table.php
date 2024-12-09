@@ -20,9 +20,11 @@ return new class extends Migration {
             $table->unsignedBigInteger('membership_id')->nullable();
             $table->date('membership_until')->nullable();
             $table->string('role', 30);
+            $table->unsignedBigInteger('gym_id');
             $table->timestamps();
 
             $table->foreign('membership_id')->references('membership_id')->on('memberships');
+            $table->foreign('gym_id')->references('gym_id')->on('gyms');
         });
     }
 

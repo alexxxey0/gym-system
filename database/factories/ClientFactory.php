@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Gym;
 use App\Models\Client;
 use App\Models\Membership;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -20,6 +21,7 @@ class ClientFactory extends Factory {
     public function definition(): array {
         $memberships = ['All-day', 'Daytime', 'Group training'];
         $memberships_ids = Membership::pluck('membership_id')->toArray();
+        $gyms_ids = Gym::pluck('gym_id')->toArray();
 
         return [
             'name' => $this->faker->firstName,
@@ -34,7 +36,8 @@ class ClientFactory extends Factory {
             'email' => $this->faker->unique()->safeEmail,
             'membership_id' => $this->faker->randomElement($memberships_ids),
             'membership_until' => $this->faker->dateTimeBetween(now(), now()->addMonth()),
-            'role' => 'client'
+            'role' => 'client',
+            'gym_id' => $this->faker->randomElement($gyms_ids)
         ];
     }
 }
