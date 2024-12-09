@@ -99,8 +99,7 @@
         const period_radio_buttons = document.querySelectorAll('.period_radio_button');
         const payments_data = {!! $payments_data !!};
         const total_income_text = document.querySelector('#total_income');
-
-        // Activate date inputs when "Other period" is selected
+        
         for (let i = 0; i < period_radio_buttons.length; i++) {
             period_radio_buttons[i].onchange = function() {
                 destroy_chart('income_chart');
