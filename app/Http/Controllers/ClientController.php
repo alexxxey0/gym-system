@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Gym;
 use App\Models\Client;
 use App\Models\Payment;
 use App\Models\Membership;
@@ -17,20 +18,25 @@ class ClientController extends Controller {
 
     public function list_clients() {
         $clients = Client::all();
-        $displayed_attributes = ['Personas kods', 'Vārds', 'Uzvārds', 'Telefona numurs', 'E-pasts', 'Abonementa veids', 'Abonements derīgs līdz:'];
+        $gyms = Gym::all();
+        $displayed_attributes = ['Personas kods', 'Vārds', 'Uzvārds', 'Telefona numurs', 'E-pasts', 'Sporta zāle', 'Abonementa veids', 'Abonements derīgs līdz:'];
 
         // Get client's membership name
         for ($i = 0; $i < count($clients); $i++) {
             if (isset($clients[$i]->membership_id)) {
                 $membership_name = Membership::select('membership_name')->where('membership_id', $clients[$i]->membership_id)->value('membership_name');
                 $clients[$i]['membership_name'] = $membership_name;
+
+                $gym_name = Gym::select('name')->where('gym_id', $clients[$i]->gym_id)->value('name');
+                $clients[$i]['gym_name'] = $gym_name;
             }
         }
 
         return view('admin.clients_list', [
             'clients' => $clients,
             'displayed_attributes' => $displayed_attributes,
-            'attribute_count' => count($displayed_attributes)
+            'attribute_count' => count($displayed_attributes),
+            'gyms' => $gyms
         ]);
     }
 
@@ -41,14 +47,18 @@ class ClientController extends Controller {
         $membership_name = Membership::select('membership_name')->where('membership_id', $membership_id)->value('membership_name');
         $client['membership_name'] = $membership_name;
 
+        $gym = Gym::where('gym_id', $client->gym_id)->first();
+
         return view('admin.client_profile', [
-            'client' => $client
+            'client' => $client,
+            'gym' => $gym
         ]);
     }
 
     public function edit_profile_page(Request $request) {
         $client = Client::where('client_id', $request->client_id)->first();
         $memberships = Membership::all();
+        $gyms = Gym::all();
 
         $membership_id = $client->membership_id;
         $membership_name = Membership::select('membership_name')->where('membership_id', $membership_id)->value('membership_name');
@@ -56,7 +66,8 @@ class ClientController extends Controller {
 
         return view('admin.edit_client_profile', [
             'client' => $client,
-            'memberships' => $memberships
+            'memberships' => $memberships,
+            'gyms' => $gyms
         ]);
     }
 
@@ -89,15 +100,19 @@ class ClientController extends Controller {
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:clients,personal_id,' . $client->client_id . ',client_id'],
             'phone' => ['required', 'unique:clients,phone,' . $client->client_id . ',client_id', 'regex:/^\d{8}$/'],
-            'email' => ['required', 'max:50', 'unique:clients,email,' . $client->client_id . ',client_id', 'email']
+            'email' => ['required', 'max:50', 'unique:clients,email,' . $client->client_id . ',client_id', 'email'],
+            'gym' => ['required']
         ], $error_messages);
+
+        $gym_id = Gym::where('name', $form_data['gym'])->value('gym_id');
 
         $client->update([
             'name' => $form_data['name'],
             'surname' => $form_data['surname'],
             'personal_id' => $form_data['personal_id'],
             'phone' => $form_data['phone'],
-            'email' => $form_data['email']
+            'email' => $form_data['email'],
+            'gym_id' => $gym_id
         ]);
 
         return redirect()->back()->with('message', 'Klienta dati veiksmīgi rediģēti!');

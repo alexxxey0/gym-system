@@ -57,6 +57,15 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('email') }}</div>
         @endif
 
+        <div class="flex flex-col">
+            <label for="gym">Sporta zāle</label>
+            <select name="gym" id="" class='rounded-md' required>
+                @foreach ($gyms as $gym)
+                    <option value="{{ $gym->name }}">{{ $gym->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
         <div class='flex flex-row items-center gap-x-4'>
             <label for="assign_membership">Uzreiz piešķirt klientam abonementu</label>
             <input type="checkbox" name="assign_membership" id="assign_membership">
@@ -134,6 +143,7 @@ Uzvārds: ${form_data.get('surname')}
 Personas kods: ${form_data.get('personal_id')}
 Telefona numurs: ${form_data.get('phone')}
 E-pasts: ${form_data.get('email')}
+Sporta zāle: ${form_data.get('gym')}
 
 Nospiežot "Apstiprināt", jūs apstiprināt, ka klienta dati ir patiesi.`;
 

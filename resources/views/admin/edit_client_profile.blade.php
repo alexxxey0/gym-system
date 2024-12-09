@@ -61,6 +61,15 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('email') }}</div>
         @endif
 
+        <div class="flex flex-col">
+            <label for="gym">Sporta zāle</label>
+            <select name="gym" id="" class='rounded-md' required>
+                @foreach ($gyms as $gym)
+                    <option value="{{ $gym->name }}" @if ($client->gym_id === $gym->gym_id) selected @endif>{{ $gym->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
         <!--
         <div>
             <h2 class="font-bold">Abonementa veids</h2>

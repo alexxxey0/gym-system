@@ -44,6 +44,10 @@
             <h2>{{ $client->email }}</h2>
         </div>
         <div>
+            <h2 class="font-bold">Sporta zāle</h2>
+            <h2>{{ $gym->name }}</h2>
+        </div>
+        <div>
             <h2 class="font-bold">Abonementa veids</h2>
             <h2>{{ $client->membership_name ?? 'Nav' }}</h2>
         </div>

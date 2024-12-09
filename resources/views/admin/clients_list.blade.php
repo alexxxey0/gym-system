@@ -32,27 +32,41 @@
 
     <div>
         <!-- Search bar for searching clients by some attribute -->
-        <div class='flex flex-col w-11/12 mx-auto mt-12'>
-            <h2 class='font-bold text-xl'>Meklēšana</h2>
-            <div class='flex flex-row gap-x-2'>
-                <div class='flex flex-col'>
-                    <label for="search_option">Meklēt pēc:</label>
-                    <select name="search_option" class='' id='search_option'>
-                        <option value="personalId">Personas kods</option>
-                        <option value="name">Vārds</option>
-                        <option value="surname">Uzvārds</option>
-                        <option value="phone">Telefona numurs</option>
-                        <option value="email">E-pasts</option>
-                        <option value="membershipName">Abonementa veids</option>
-                        <option value="membershipUntil">Abonementa derīgs līdz:</option>
-                    </select>
-                </div>
-                <div class='flex flex-col'>
-                    <label for="search_field">Meklējamā vērtība:</label>
-                    <input type="text" name='search_field' id='search_field'>
+        <div class='flex flex-row-reverse justify-end w-11/12 mx-auto gap-x-8 items-end'>
+
+            <div class='flex flex-col mt-12'>
+                <h2 class='font-bold text-xl'>Meklēšana</h2>
+                <div class='flex flex-row gap-x-2'>
+                    <div class='flex flex-col'>
+                        <label for="search_option">Meklēt pēc:</label>
+                        <select name="search_option" class='' id='search_option'>
+                            <option value="personalId">Personas kods</option>
+                            <option value="name">Vārds</option>
+                            <option value="surname">Uzvārds</option>
+                            <option value="phone">Telefona numurs</option>
+                            <option value="email">E-pasts</option>
+                            <option value="membershipName">Abonementa veids</option>
+                            <option value="membershipUntil">Abonementa derīgs līdz:</option>
+                        </select>
+                    </div>
+                    <div class='flex flex-col'>
+                        <label for="search_field">Meklējamā vērtība:</label>
+                        <input type="text" name='search_field' id='search_field'>
+                    </div>
                 </div>
             </div>
+
+            <div class='flex flex-col mt-12'>
+                <h2 class='font-bold text-xl'>Sporta zāle</h2>
+                <select name="gym" class='mt-1' id='gym_selection'>
+                    <option value="all">Visas zāles</option>
+                    @foreach($gyms as $gym)
+                        <option value="{{ $gym->gym_id }}">{{ $gym->name }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
+
         <!-- Table with all the clients -->
         <div class='clients_list grid grid-cols-{{ $attribute_count }} mx-auto w-11/12 mt-4 mb-12 border-2 border-black rounded-md p-6'>
             @foreach($displayed_attributes as $attribute)
@@ -62,7 +76,7 @@
             @endforeach
 
             @foreach($clients as $client)
-                <div class='client_row contents' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}' data-name='{{ $client->name }}' data-surname='{{ $client->surname }}' data-phone='{{ $client->phone }}' data-email='{{ $client->email }}' data-membership-name='{{ $client->membership_name }}' data-membership-until='{{ $client->membership_until }}'>
+                <div class='client_row contents' data-personal-id='{{ $client->personal_id }}' data-id='{{ $client->client_id }}' data-name='{{ $client->name }}' data-surname='{{ $client->surname }}' data-phone='{{ $client->phone }}' data-email='{{ $client->email }}' data-membership-name='{{ $client->membership_name }}' data-membership-until='{{ $client->membership_until }}' data-gym-id='{{ $client->gym_id }}'>
                     <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->personal_id }}</h1>
                     </div>
@@ -77,6 +91,9 @@
                     </div>
                     <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->email }}</h1>
+                    </div>
+                    <div class="client_cell">
+                        <h1 class="text-center">{{ $client->gym_name }}</h1>
                     </div>
                     <div class='client_cell'>
                         <h1 class='text-center'>{{ $client->membership_name ?? 'Nav' }}</h1>
@@ -125,6 +142,32 @@
             });
         }
 
+        const gym_selection = document.querySelector('#gym_selection');
+        // Filter the clients based on the selected gym
+        gym_selection.addEventListener('change', function() {
+            search_field.value = "";
+
+            for (let i = 0; i < client_rows.length; i++) {
+                const client_cells = client_rows[i].querySelectorAll('.client_cell');
+
+                if (this.value === 'all') {
+                    for (let j = 0; j < client_cells.length; j++) {
+                        client_cells[j].classList.remove('hidden');
+                    }
+
+                } else {
+                    for (let j = 0; j < client_cells.length; j++) {
+                        client_cells[j].classList.add('hidden');
+
+                        if (client_rows[i].dataset.gymId === this.value) {
+                            client_cells[j].classList.remove('hidden');
+                        }
+                    }
+                }
+            }
+        });
+
+        const search_field = document.querySelector('#search_field');
         // Filter the client list using the search string
         search_field.addEventListener('input', function () {
             const search_option = document.querySelector('#search_option').value;
@@ -137,11 +180,12 @@
                 for (let j = 0; j < client_cells.length; j++) {
                     client_cells[j].classList.add('hidden');
 
-                    if ((client_rows[i].dataset[search_option].toLowerCase()).includes(search_string.toLowerCase())) {
+                    if ((client_rows[i].dataset[search_option].toLowerCase()).includes(search_string.toLowerCase()) && ((client_rows[i].dataset.gymId === gym_selection.value) || (gym_selection.value === 'all'))) {
                         client_cells[j].classList.remove('hidden');
                     }
                 }
             }
         });
+
     </script>
 @endsection

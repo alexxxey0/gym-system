@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Gym;
 use App\Models\Coach;
 use App\Models\Client;
 use App\Models\Payment;
+use App\Models\Membership;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Membership;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -20,6 +21,7 @@ class RegistrationController extends Controller {
     public function view_register_client_form(Request $request) {
 
         $memberships = Membership::all();
+        $gyms = Gym::all();
 
         // Array that matches every membership with its price (needed for updating membership price in JS)
         $memberships_prices = array();
@@ -30,7 +32,8 @@ class RegistrationController extends Controller {
 
         return view('admin.register_client', [
             'memberships' => $memberships,
-            'memberships_prices' => json_encode($memberships_prices)
+            'memberships_prices' => json_encode($memberships_prices),
+            'gyms' => $gyms
         ]);
     }
 
@@ -65,7 +68,8 @@ class RegistrationController extends Controller {
             'surname' => ['required', 'max:30'],
             'personal_id' => ['required', 'regex:/^\d{6}-?\d{5}$/', 'max:12', 'unique:clients'],
             'phone' => ['required', 'unique:clients', 'regex:/^\d{8}$/'],
-            'email' => ['required', 'max:50', 'unique:clients', 'email']
+            'email' => ['required', 'max:50', 'unique:clients', 'email'],
+            'gym' => ['required']
         ], $error_messages);
 
         $temporary_password = Str::random(10);
@@ -80,6 +84,8 @@ class RegistrationController extends Controller {
             $date_month_from_now = null;
         }
 
+        $gym_id = Gym::where('name', $form_data['gym'])->value('gym_id');
+
         $client = Client::create([
             'name' => $form_data['name'],
             'surname' => $form_data['surname'],
@@ -89,7 +95,8 @@ class RegistrationController extends Controller {
             'email' => $form_data['email'],
             'role' => 'client',
             'membership_id' => $membership_id,
-            'membership_until' => $date_month_from_now
+            'membership_until' => $date_month_from_now,
+            'gym_id' => $gym_id
         ]);
 
         // Send the temporary password to the user's email
