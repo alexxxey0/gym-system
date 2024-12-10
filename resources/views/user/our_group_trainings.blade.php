@@ -19,6 +19,16 @@
         <h1 class='text-center text-3xl font-bold mt-8'>Visas grupu nodarbības</h1>
     @endif
 
+    <div class='w-8/12 mx-auto flex flex-col gap-y-1'>
+        <label for="gym" class='font-bold text-lg'>Sporta zāle</label>
+        <select name="gym" id="gym_selection" class='w-fit rounded-md'>
+            <option value="all">Visas zāles</option>
+            @foreach ($gyms as $gym)
+                <option value="{{ $gym->gym_id }}" @if (Auth::user()->role === 'client' and Auth::user()->gym_id === $gym->gym_id) selected @endif>{{ $gym->name }}</option>
+            @endforeach
+        </select>
+    </div>
+
     @if (count($group_trainings) === 0)
         <style>
             html, body {
@@ -30,7 +40,8 @@
 
         <div class='flex flex-col mt-12 mb-12 gap-y-12'>
             @foreach($group_trainings as $group_training)
-                <div class='flex flex-row w-8/12 mx-auto gap-x-8 items-start'>
+            <div class='group_training' data-gym-id='{{ $group_training->gym_id }}'>
+                <div class='flex flex-row w-8/12 mx-auto gap-x-8 items-start mb-4'>
                     @if (isset($group_training->path_to_image))
                         <img class='max-w-[40%] border-4 border-black rounded-sm' src="{{ asset('storage/' . $group_training->path_to_image) }}" alt="">
                     @else
@@ -41,6 +52,7 @@
                         <h2 class='font-bold text-2xl'>{{ $group_training->name }}</h2>
                         <p>{{ $group_training->description }}</p>
                         <h2 class='text-lg'><span class='font-bold'>Treneris: </span>{{ $group_training->coach->name }} {{ $group_training->coach->surname }}</h2>
+                        <h2 class='text-lg'><span class='font-bold'>Sporta zāle: </span>{{ $group_training->gym->name }}</h2>
                         
                         <ul class='list-none'>
                             @foreach($group_training->schedule as $day => $times)
@@ -86,6 +98,7 @@
                     </div>
                 </div>
                 <hr class='w-10/12 mx-auto'>
+            </div>
             @endforeach
         </div>
 
@@ -96,6 +109,37 @@
                 const confirm_message = `Vai tiešām gribat atcelt nodarbības veidu ${form_data.get('training_name')}?`;
                 return confirm(confirm_message);
             }
+
+
+            const gym_selection = document.querySelector('#gym_selection');
+            const group_trainings = document.querySelectorAll('.group_training');
+
+            if (gym_selection.value !== 'all') {
+                for (let i = 0; i < group_trainings.length; i++) {
+                    if (group_trainings[i].dataset.gymId === gym_selection.value) {
+                        group_trainings[i].classList.remove('hidden');
+                    } else {
+                        group_trainings[i].classList.add('hidden');
+                    }
+                }
+            }
+
+            gym_selection.addEventListener('change', function() {
+                if (this.value === 'all') {
+                    for (let i = 0; i < group_trainings.length; i++) {
+                        group_trainings[i].classList.remove('hidden');
+                    }
+                } else {
+                    for (let i = 0; i < group_trainings.length; i++) {
+                        if (group_trainings[i].dataset.gymId === this.value) {
+                            group_trainings[i].classList.remove('hidden');
+                        } else {
+                            group_trainings[i].classList.add('hidden');
+                        }
+                    }
+                }
+            });
+
         </script>
     @endif
 @endsection

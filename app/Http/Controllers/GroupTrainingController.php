@@ -4,17 +4,18 @@ namespace App\Http\Controllers;
 
 use DateTime;
 use Carbon\Carbon;
+use App\Models\Gym;
 use App\Models\Coach;
 use App\Models\Client;
+use App\Models\Attendance;
 use App\Models\Membership;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\GroupTraining;
 use App\Rules\valid_schedule;
 use App\Models\ClientTraining;
-use App\Http\Controllers\Controller;
-use App\Models\Attendance;
 use App\Models\CanceledTraining;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
@@ -29,8 +30,11 @@ class GroupTrainingController extends Controller {
             $coaches = null;
         }
 
+        $gyms = Gym::all();
+
         return view('coach.create_new_group_training', [
             'coaches' => $coaches,
+            'gyms' => $gyms
         ]);
     }
 
@@ -65,7 +69,8 @@ class GroupTrainingController extends Controller {
             'description' => ['required', 'max:2000'],
             'image' => ['image', 'nullable'],
             'max_participants' => ['required', 'numeric', 'min:10', 'max:50'],
-            'schedule' => [new valid_schedule]
+            'schedule' => [new valid_schedule],
+            'gym' => ['required']
         ], $messages);
 
         // Save the profile picture to the server
@@ -83,7 +88,8 @@ class GroupTrainingController extends Controller {
             'clients_signed_up' => 0,
             'max_clients' => intval($form_data['max_participants']),
             'path_to_image' => $path ?? null,
-            'active' => true
+            'active' => true,
+            'gym_id' => $form_data['gym']
         ]);
 
 
@@ -108,6 +114,8 @@ class GroupTrainingController extends Controller {
             $group_trainings[$i]['coach'] = $coach;
             $group_trainings[$i]['schedule'] = json_decode($group_trainings[$i]['schedule'], true);
 
+            $group_trainings[$i]['gym'] = Gym::where('gym_id', $group_trainings[$i]['gym_id'])->first();
+
             if (Auth::user()->role === 'client') {
                 if (ClientTraining::where('client_id', Auth::user()->client_id)->where('training_id', $group_trainings[$i]['training_id'])->exists()) {
                     $group_trainings[$i]['client_signed_up'] = true;
@@ -127,10 +135,13 @@ class GroupTrainingController extends Controller {
             'sunday' => 'Svētdiena'
         ];
 
+        $gyms = Gym::all();
+
         return view('user.our_group_trainings', [
             'group_trainings' => $group_trainings,
             'days_translations' => $days_translations,
-            'group_trainings_included' => $group_trainings_included
+            'group_trainings_included' => $group_trainings_included,
+            'gyms' => $gyms
         ]);
     }
 
@@ -194,9 +205,12 @@ class GroupTrainingController extends Controller {
             $coaches = null;
         }
 
+        $gyms = Gym::all();
+
         return view('coach.edit_group_training', [
             'group_training' => $group_training,
-            'coaches' => $coaches
+            'coaches' => $coaches,
+            'gyms' => $gyms
         ]);
     }
 
@@ -230,7 +244,8 @@ class GroupTrainingController extends Controller {
             'description' => ['required', 'max:2000'],
             'image' => ['image', 'nullable'],
             'max_participants' => ['required', 'numeric', 'min:10', 'max:50'],
-            'schedule' => [new valid_schedule]
+            'schedule' => [new valid_schedule],
+            'gym' => ['required']
         ], $messages);
 
         // Save the profile picture to the server
@@ -248,7 +263,8 @@ class GroupTrainingController extends Controller {
             'coach_id' => $request['coach_id'],
             'schedule' => json_encode($form_data['schedule']),
             'max_clients' => intval($form_data['max_participants']),
-            'path_to_image' => $path ?? $group_training->path_to_image
+            'path_to_image' => $path ?? $group_training->path_to_image,
+            'gym_id' => $form_data['gym']
         ]);
 
 

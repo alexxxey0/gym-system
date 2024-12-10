@@ -48,7 +48,7 @@
                 <li>Nodarbības beigu laiks nevar būt vienāds vai agrāks par sākuma laiku</li>
                 <li>Nodarbības ilgums ir vismaz 30 minūtes</li>
                 <li>Nodarbības ilgums nepārsniedz 120 minūtes</li>
-                <li>Nodarbībai jānotiek sporta zāles darba laikā (darba dienās 08:00-22:00, brīvdienās 09:00-20:00)</li>
+                <li>Nodarbībai jānotiek sporta zāļu darba laikā (darba dienās 08:00-22:00, brīvdienās 09:00-20:00)</li>
             </ul>
 
             @for ($i = 0; $i < count($days_lv); $i++)
@@ -78,18 +78,26 @@
 
         <div class="flex flex-col">
             <label class='text-lg' for="max_participants">Maksimālais apmeklētāju skaits (10-50)</label>
-            <input class='w-fit' type="number" name="max_participants" min="10" max="50" required value="{{ old('max_participants') }}">
+            <input class='w-fit rounded-md' type="number" name="max_participants" min="10" max="50" required value="{{ old('max_participants') }}">
         </div>
         @if ($errors->has('max_participants'))
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('max_participants') }}</div>
         @endif
+
+        <label for="gym">Sporta zāle</label>
+        <h2>Izvēlieties sporta zāli, kur notiks nodarbības</h2>
+        <select name="gym" id="gym_selection" required class='w-fit rounded-md'>
+            @foreach($gyms as $gym)
+                <option value="{{ $gym->gym_id }}">{{ $gym->name }}</option>
+            @endforeach
+        </select>
 
         @if (Auth::user()->role === 'coach')
             <input type="hidden" name="coach_id" value="{{ Auth::user()->coach_id }}">
         @else
             <label class='text-lg' for="coach_id">Treneris</label>
             <h2>Izvēlieties treneri, kas vadīs nodarbības.</h2>
-            <select name="coach_id" required class='w-fit'>
+            <select name="coach_id" required class='w-fit rounded-md'>
                 @foreach ($coaches as $coach)
                     <option value="{{ $coach->coach_id }}">{{ $coach->name }}  {{ $coach->surname }} (p.k. {{ $coach->personal_id }})</option>
                 @endforeach

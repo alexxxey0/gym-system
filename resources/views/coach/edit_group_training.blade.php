@@ -100,6 +100,14 @@
             <div class='bg-[#f54242] text-white rounded-md p-2 mt-2'>{{ $errors->first('max_participants') }}</div>
         @endif
 
+        <label for="gym">Sporta zāle</label>
+        <h2>Izvēlieties sporta zāli, kur notiks nodarbības</h2>
+        <select name="gym" id="gym_selection" required class='w-fit rounded-md'>
+            @foreach($gyms as $gym)
+                <option value="{{ $gym->gym_id }}">{{ $gym->name }}</option>
+            @endforeach
+        </select>
+
         @if (Auth::user()->role === 'coach')
             <input type="hidden" name="coach_id" value="{{ Auth::user()->coach_id }}">
         @else
