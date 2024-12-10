@@ -15,4 +15,8 @@ class Client extends Authenticatable {
     public function username() {
         return 'personal_id';
     }
+
+    public function payments() {
+        return $this->hasMany(Payment::class);
+    }
 }

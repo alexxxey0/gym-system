@@ -10,4 +10,8 @@ class Gym extends Model {
     protected $table = 'gyms';
     protected $guarded = [];
     protected $primaryKey = 'gym_id';
+
+    public function clients() {
+        return $this->hasMany(Client::class);
+    }
 }

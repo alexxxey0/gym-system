@@ -26,10 +26,9 @@ class ClientController extends Controller {
             if (isset($clients[$i]->membership_id)) {
                 $membership_name = Membership::select('membership_name')->where('membership_id', $clients[$i]->membership_id)->value('membership_name');
                 $clients[$i]['membership_name'] = $membership_name;
-
-                $gym_name = Gym::select('name')->where('gym_id', $clients[$i]->gym_id)->value('name');
-                $clients[$i]['gym_name'] = $gym_name;
             }
+            $gym_name = Gym::select('name')->where('gym_id', $clients[$i]->gym_id)->value('name');
+            $clients[$i]['gym_name'] = $gym_name;
         }
 
         return view('admin.clients_list', [
