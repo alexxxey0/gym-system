@@ -34,15 +34,6 @@
     <h1 class='text-center text-3xl font-bold mt-8'>Grupu nodarbību kalendārs</h1>
 
     <div class='w-10/12 mx-auto mt-8 mb-16 flex flex-col gap-y-8 overflow-x-scroll'>
-        @if (Auth::user()->role === 'coach' or Auth::user()->role === 'client')
-            <div>
-                <label class='text-lg' for="trainings_displayed">Rādīt:</label>
-                <select name="trainings_displayed" id="trainings_displayed" class='rounded-md'>
-                    <option value="all_trainings" selected>Visas nodarbības</option>
-                    <option value="my_trainings">Manas nodarbības</option>
-                </select>
-            </div>
-        @endif
         
         <div class='flex flex-col'>
             <div class='flex flex-row gap-x-2 items-center'>
@@ -66,6 +57,26 @@
             </div>
         </div>
 
+        @if (Auth::user()->role === 'coach' or Auth::user()->role === 'client')
+            <div class='flex flex-col gap-y-1'>
+                <label class='font-bold' for="trainings_displayed">Rādīt:</label>
+                <select name="trainings_displayed" id="trainings_displayed" class='rounded-md w-fit'>
+                    <option value="all_trainings" selected>Visas nodarbības</option>
+                    <option value="my_trainings">Manas nodarbības</option>
+                </select>
+            </div>
+        @endif
+
+        <div class='flex flex-col gap-y-1'>
+            <label for="gym" class='font-bold'>Sporta zāle</label>
+            <select name="gym" id="gym_selection" class='w-fit rounded-md'>
+                <option value="all">Visas zāles</option>
+                @foreach($gyms as $gym)
+                    <option value="{{ $gym->gym_id }}">{{ $gym->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
         <div id='calendar' class=''></div>
     </div>
 
@@ -78,6 +89,7 @@
         <h1 class='text-center font-bold text-2xl mb-4'>Informācija par grupu nodarbību</h1>
         <h1 id='training_name' class='font-bold text-lg'></h1>
         <h2>Treneris/-e: <span id='training_coach'></span></h2>
+        <h2>Sporta zāle: <span id='training_gym'></span></h2>
         <h2>Datums un laiks: <span id='training_time_and_date'></span></h2>
         <h2 id='canceled_text' class='hidden text-center text-red-500 font-bold text-2xl mt-2'>Nodarbība ir atcelta!</h2>
 
@@ -115,6 +127,7 @@
         const training_popup = document.querySelector('#training_popup');
         const training_name = document.querySelector('#training_name');
         const training_coach = document.querySelector('#training_coach');
+        const training_gym = document.querySelector('#training_gym');
         const training_time_and_date = document.querySelector('#training_time_and_date');
         const training_actions = document.querySelector('#training_actions');
         const training_ids = document.querySelectorAll('.training_id');
@@ -167,6 +180,7 @@
                     training_popup.classList.remove('hidden');
                     training_name.textContent = info.event.title;
                     training_coach.textContent = info.event.extendedProps.coach_full_name;
+                    training_gym.textContent = info.event.extendedProps.gym_name;
                     training_time_and_date.textContent = info.event.extendedProps.time_and_date;
                     for (let i = 0; i < training_ids.length; i++) {
                         training_ids[i].value = info.event.extendedProps.training_id;
@@ -207,44 +221,77 @@
             calendar.render();
 
             const trainings_displayed_selection = document.querySelector('#trainings_displayed');
+            let trainings_displayed = trainings_displayed_selection.value;
+            let selected_gym_id = 'all';
+            let calendar_events;
 
             if (trainings_displayed_selection !== null) {
                 trainings_displayed_selection.addEventListener('change', function() {
-                    const calendar_events = calendar.getEvents();
-                    if (this.value === 'my_trainings') {
+                    trainings_displayed = this.value;
+                    calendar_events = calendar.getEvents();
 
-                        if (coach_id != 0) {
-                            // Remove trainings that are not hosted by the currently authenticated coach
-                            for (let i = 0; i < calendar_events.length; i++) {
-                                if (calendar_events[i].extendedProps.coach_id !== coach_id) {
-                                    calendar_events[i].remove();
-                                }
-                            }
-                        } else {
-                            // Remove trainings that the currently authenticated client is not signed up to
-                            for (let i = 0; i < calendar_events.length; i++) {
-                                if (!calendar_events[i].extendedProps.client_signed_up) {
-                                    calendar_events[i].remove();
-                                }
-                            }
-                        }
-
-                    } else {
-
-                        // Clear the calendar from all events
-                        for (let i = 0; i < calendar_events.length; i++) {
-                            calendar_events[i].remove();
-                        }
-
-                        // Add all the events back to the calendar
-                        events.forEach((event) => {
-                            calendar.addEvent(event);
-                        });
+                    // Clear the calendar from all events
+                    for (let i = 0; i < calendar_events.length; i++) {
+                        calendar_events[i].remove();
                     }
 
+                    // Add the necessary events back to the calendar
+                    events.forEach((event) => {
+
+                        if (event.extendedProps.gym_id == selected_gym_id || selected_gym_id === 'all') {
+
+                            if (trainings_displayed === 'my_trainings') {
+                                // For coaches, add trainings that they are hosting
+                                if (coach_id != 0 && event.extendedProps.coach_id === coach_id) {
+                                    calendar.addEvent(event);
+                                // For clients, add trainings that they are signed up for
+                                } else if (event.extendedProps.client_signed_up) {
+                                    calendar.addEvent(event);
+                                }
+                            // If "All trainings" option is selected, add all the trainings
+                            } else {
+                                calendar.addEvent(event);
+                            }
+                        }
+                    });
+
+                    // Re-render the updated calendar
                     calendar.render();
                 });
             }
+
+            const gym_selection = document.querySelector('#gym_selection');
+
+            gym_selection.addEventListener('change', function() {
+                calendar_events = calendar.getEvents();
+                selected_gym_id = this.value;
+
+                // Clear the calendar from all events
+                for (let i = 0; i < calendar_events.length; i++) {
+                    calendar_events[i].remove();
+                }
+
+                // Add all the events back to the calendar
+                events.forEach((event) => {
+                    if (event.extendedProps.gym_id == selected_gym_id || selected_gym_id === 'all') {
+
+                        if (trainings_displayed === 'my_trainings') {
+                            // For coaches, add trainings that they are hosting
+                            if (coach_id != 0 && event.extendedProps.coach_id === coach_id) {
+                                calendar.addEvent(event);
+                            // For clients, add trainings that they are signed up for
+                            } else if (event.extendedProps.client_signed_up) {
+                                calendar.addEvent(event);
+                            }
+                        // If "All trainings" option is selected, add all the trainings
+                        } else {
+                            calendar.addEvent(event);
+                        }
+                    }
+                });
+
+                calendar.render();
+            });
 
         });
     </script>

@@ -392,6 +392,8 @@ class GroupTrainingController extends Controller {
             $coach = Coach::where('coach_id', $group_training->coach_id)->first();
             $clients_count = count(ClientTraining::where('training_id', $group_training->training_id)->get()->toArray());
 
+            $gym = Gym::where('gym_id', $group_training->gym_id)->first();
+
             foreach ($schedule as $day => $times) {
                 // Add trainings to the calendar starting from the last week and up to 4 weeks ahead
 
@@ -417,6 +419,8 @@ class GroupTrainingController extends Controller {
                     $event['extendedProps'] = array();
                     $event['extendedProps']['coach_id'] = $group_training->coach_id;
                     $event['extendedProps']['coach_full_name'] = $coach->name . " " . $coach->surname;
+                    $event['extendedProps']['gym_name'] = $gym->name;
+                    $event['extendedProps']['gym_id'] = $gym->gym_id;
                     $event['extendedProps']['time_and_date'] = $start_time->format('Y-m-d') . " " . $start_time->format('H:i') . "-" . $end_time->format('H:i');
                     $event['extendedProps']['training_id'] = $group_training->training_id;
                     $event['extendedProps']['training_date'] = $start_time->format('Y-m-d');
@@ -454,9 +458,11 @@ class GroupTrainingController extends Controller {
             }
         }
 
+        $gyms = Gym::all();
 
         return view('user.group_trainings_calendar', [
-            'events' => json_encode($events)
+            'events' => json_encode($events),
+            'gyms' => $gyms
         ]);
     }
 

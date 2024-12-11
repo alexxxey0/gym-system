@@ -24,7 +24,11 @@
         <select name="gym" id="gym_selection" class='w-fit rounded-md'>
             <option value="all">Visas zāles</option>
             @foreach ($gyms as $gym)
-                <option value="{{ $gym->gym_id }}" @if (Auth::user()->role === 'client' and Auth::user()->gym_id === $gym->gym_id) selected @endif>{{ $gym->name }}</option>
+                @php
+                    if (Auth::user()->role === 'client' and Auth::user()->gym_id === $gym->gym_id) $my_gym = true;
+                    else $my_gym = false;
+                @endphp
+                <option value="{{ $gym->gym_id }}" @if ($my_gym) selected @endif>{{ $gym->name }} @if ($my_gym) (Mana sporta zāle) @endif</option>
             @endforeach
         </select>
     </div>
