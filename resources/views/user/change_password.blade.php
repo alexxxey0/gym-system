@@ -3,11 +3,6 @@
 @section('title', "Mainīt paroli")
 
 @section('content')
-    <style>
-        html, body {
-            height: 100%;
-        }
-    </style>
 
     <div class='ml-8 mt-12'>
         <x-secondary_link class='' href="{{ route('user_profile_page') }}">← Atpakaļ uz manu profilu</x-secondary_link>
@@ -15,7 +10,7 @@
     
     <h1 class='font-bold text-2xl text-center mt-8'>Paroles mainīšana</h1>
 
-    <form action="{{ route('change_password') }}" method="POST" class='flex flex-col gap-y-4 w-1/5 mx-auto mt-12'>
+    <form action="{{ route('change_password') }}" method="POST" class='flex flex-col gap-y-4 w-1/5 mx-auto mt-12 mb-12'>
         @csrf
         <div class='flex flex-col gap-y-2'>
             <label for="old_password">Pašreizējā parole</label>
