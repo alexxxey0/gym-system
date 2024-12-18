@@ -100,9 +100,9 @@ class CoachController extends Controller {
         ];
 
         $form_data = $request->validate([
-            'personal_description' => ['max:2000'],
-            'contact_phone' => ['regex:/^\d{8}$/'],
-            'contact_email' => ['max:50', 'email'],
+            'personal_description' => ['max:2000', 'nullable'],
+            'contact_phone' => ['regex:/^\d{8}$/', 'nullable'],
+            'contact_email' => ['max:50', 'email', 'nullable'],
             'profile_picture' => ['image', 'max:5000', 'nullable']
         ], $messages);
 

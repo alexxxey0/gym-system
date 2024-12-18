@@ -221,7 +221,12 @@
             calendar.render();
 
             const trainings_displayed_selection = document.querySelector('#trainings_displayed');
-            let trainings_displayed = trainings_displayed_selection.value;
+            if (trainings_displayed_selection !== null) {
+                trainings_displayed = trainings_displayed_selection.value;
+            } else {
+                trainings_displayed = null;
+            }
+            
             let selected_gym_id = 'all';
             let calendar_events;
 

@@ -16,7 +16,7 @@
         <h2>Nodarbības datums: {{ $group_training_date }}</h2>
     </div>
 
-    <form class='clients_list grid grid-cols-3 place-items-start mt-8 w-8/12 mx-auto p-4 rounded-lg' action="{{ route('save_attendance') }}" method="POST">
+    <form class='clients_list grid grid-cols-3 place-items-start mt-8 mb-12 w-8/12 mx-auto p-4 rounded-lg' action="{{ route('save_attendance') }}" method="POST">
         @csrf
         <h2 class='text-lg'>Klients</h2>
         <h2 class='text-lg place-self-center'>Ieradās</h2>

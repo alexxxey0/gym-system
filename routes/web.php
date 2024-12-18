@@ -88,6 +88,13 @@ Route::middleware('auth:coach,admin')->group(function () {
     Route::post('/save_attendance', [GroupTrainingController::class, 'save_attendance'])->name('save_attendance');
 });
 
+// Routes for clients and admin
+Route::middleware(['auth:client,admin'])->group(function () {
+
+    // Extend client's membership (action)
+    Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
+});
+
 // Admin routes
 Route::middleware(['auth:admin'])->group(function () {
 
@@ -143,9 +150,6 @@ Route::middleware(['auth:admin'])->group(function () {
     // Extend client's membership page
     Route::get('client/{client_id}/extend_membership', [MembershipController::class, 'extend_membership_page'])->name('extend_client_membership_page');
 
-    // Extend client's membership (action)
-    Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
-
     // Change client's membership page
     Route::get('client/{client_id}/change_membership', [MembershipController::class, 'change_membership_page'])->name('change_client_membership_page');
 
@@ -188,9 +192,6 @@ Route::middleware(['auth:client'])->group(function () {
 
     // Get client secret (needed to make a payment)
     Route::post('/get_client_secret', [MembershipController::class, 'get_client_secret'])->name('get_client_secret');
-
-    // Extend client's membership (action)
-    Route::post('/extend_client_membership', [MembershipController::class, 'extend_client_membership'])->name('extend_client_membership');
 
     // Upgrade membership page
     Route::get('/upgrade_my_membership_page', [MembershipController::class, 'upgrade_my_membership_page'])->name('upgrade_my_membership_page');

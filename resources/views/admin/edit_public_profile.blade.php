@@ -32,7 +32,7 @@
                 <label for="contact_phone">Kontakttelefons</label>
                 <div class='flex flex-row gap-x-2'>
                     <input type="text" value="+371" class='w-2/12 rounded-md' disabled>
-                    <input type="text" required maxlength="8" class='rounded-md w-10/12' name='contact_phone' id='contact_phone'>
+                    <input type="text" maxlength="8" class='rounded-md w-10/12' name='contact_phone' id='contact_phone'>
                 </div>
             </div>
             @if ($errors->has('contact_phone'))
