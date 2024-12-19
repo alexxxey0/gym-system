@@ -24,26 +24,32 @@ class valid_schedule implements ValidationRule {
             $gym_opening_weekend = Carbon::parse('09:00');
             $gym_closing_weekend = Carbon::parse('20:00');
 
+            // Validate that the start time is set
             if (!isset($day_start_time) or !$day_start_time) {
                 $invalid_days_array_eng[] = $day;
             }
 
+            // Validate that the end time is set
             if (!isset($day_end_time) or !$day_end_time) {
                 $invalid_days_array_eng[] = $day;
             }
 
+            // Validate that the end time is not before or at the same time as start time
             if ($day_end_time->lessThanOrEqualTo($day_start_time)) {
                 $invalid_days_array_eng[] = $day;
             }
 
+            // Validate that the training duration is at least 30 minutes
             if ($day_start_time->diffInMinutes($day_end_time) < 30) {
                 $invalid_days_array_eng[] = $day;
             }
 
+            // Validate that the training duration is no more than 120 minutes
             if ($day_start_time->diffInMinutes($day_end_time) > 120) {
                 $invalid_days_array_eng[] = $day;
             }
 
+            // Validate that the training takes place entirely during the gym working hours
             if (in_array($day, ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'])) {
                 if ($day_start_time->lessThan($gym_opening_weekday) or $day_end_time->greaterThan($gym_closing_weekday)) {
                     $invalid_days_array_eng[] = $day;
