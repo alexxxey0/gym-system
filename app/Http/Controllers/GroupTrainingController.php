@@ -42,8 +42,11 @@ class GroupTrainingController extends Controller {
 
         $days_eng = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
+        // "schedule" array is used to build the group training's schedule from the request
         $schedule = array();
+
         foreach ($days_eng as $day) {
+            // If the user has selected that the training is taking place on some day, add training's start and end times this day to the "schedule" array
             if (isset($request[$day])) {
                 $day_start_time = $request['start_time_' . $day];
                 $day_end_time = $request['end_time_' . $day];
@@ -69,7 +72,7 @@ class GroupTrainingController extends Controller {
             'description' => ['required', 'max:2000'],
             'image' => ['image', 'nullable'],
             'max_participants' => ['required', 'numeric', 'min:10', 'max:50'],
-            'schedule' => [new valid_schedule],
+            'schedule' => [new valid_schedule], // custom validation rule
             'gym' => ['required']
         ], $messages);
 

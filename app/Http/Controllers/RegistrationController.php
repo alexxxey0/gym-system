@@ -40,6 +40,7 @@ class RegistrationController extends Controller {
     // Register a new client
     public function register_client(Request $request) {
 
+        // If the personal was entered without the dash, add the dash
         $request['personal_id'] = add_dash($request['personal_id']);
 
         $error_messages = [
