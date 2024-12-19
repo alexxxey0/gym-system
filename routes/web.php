@@ -4,6 +4,7 @@ use App\Models\Membership;
 use App\Models\GroupTraining;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GymController;
 use PHPUnit\Framework\Attributes\Group;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CoachController;
@@ -11,9 +12,9 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\GroupTrainingController;
-use App\Http\Controllers\StatisticsController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -24,7 +25,7 @@ Route::post('/login', [LoginController::class, 'authenticate'])->name('login_pos
 // Routes for any authenticated user
 Route::middleware(['auth:client,coach,admin'])->group(function () {
 
-    // "Our group trainings" page
+    // Page with information about all group trainings
     Route::get('/our_group_trainings', [GroupTrainingController::class, 'our_group_trainings_page'])->name('our_group_trainings');
 
     // Page with information about available memberships
@@ -32,6 +33,10 @@ Route::middleware(['auth:client,coach,admin'])->group(function () {
 
     // Group trainings calendar
     Route::get('/group_trainings_calendar', [GroupTrainingController::class, 'group_trainings_calendar'])->name('group_trainings_calendar');
+
+    // Page with information about all gyms
+    Route::get('/our_gyms', [GymController::class, 'our_gyms'])->name('our_gyms');
+    
 });
 
 // Routes for clients and coaches
@@ -161,6 +166,12 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // Gym statistics page
     Route::get('/gym_statistics', [StatisticsController::class, 'gym_statistics_page'])->name('gym_statistics');
+
+    // Create a new gym page
+    Route::get('/create_new_gym', [GymController::class, 'create_new_gym_page'])->name('create_new_gym_page');
+
+    // Create a new gym
+    Route::post('/create_new_gym', [GymController::class, 'create_new_gym'])->name('create_new_gym');
 
     // Admin's logout
     Route::post('/logout_admin', function () {

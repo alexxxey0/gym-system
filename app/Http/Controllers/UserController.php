@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\Gym;
 use App\Models\Coach;
 use App\Models\Client;
 use App\Models\Membership;
