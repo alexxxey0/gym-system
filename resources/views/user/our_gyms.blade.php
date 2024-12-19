@@ -12,6 +12,9 @@
                 <h2 class='font-bold text-2xl'>{{ $gym->name }}</h2>
                 <p>{{ $gym->description }}</p>
                 <p><span class='font-bold'>Adrese: </span><a href='https://maps.google.com/?q={{ $gym->address }}' class='hover:text-[#007bff]'>{{ $gym->address }}</a></p>
+                @if (Auth::user()->role === 'admin')
+                    <x-main_link href="{{ route('edit_gym_page', ['gym_id' => $gym->gym_id]) }}" class='mr-auto mt-4'>Rediģēt sporta zāles informāciju</x-main_link>
+                @endif
             </div>
         @endforeach
     </div>

@@ -36,7 +36,6 @@ Route::middleware(['auth:client,coach,admin'])->group(function () {
 
     // Page with information about all gyms
     Route::get('/our_gyms', [GymController::class, 'our_gyms'])->name('our_gyms');
-    
 });
 
 // Routes for clients and coaches
@@ -172,6 +171,12 @@ Route::middleware(['auth:admin'])->group(function () {
 
     // Create a new gym
     Route::post('/create_new_gym', [GymController::class, 'create_new_gym'])->name('create_new_gym');
+
+    // Edit gym page
+    Route::get('/edit_gym/{gym_id}', [GymController::class, 'edit_gym_page'])->name('edit_gym_page');
+
+    // Edit gym (action
+    Route::post('/edit_gym', [GymController::class, 'edit_gym'])->name('edit_gym');
 
     // Admin's logout
     Route::post('/logout_admin', function () {
