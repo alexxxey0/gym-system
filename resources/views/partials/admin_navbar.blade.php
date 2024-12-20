@@ -18,6 +18,7 @@
     <a href="{{ route('our_group_trainings') }}" class="hover:text-[#007BFF]">Visas grupu nodarbības</a>
     <a href="{{ route('create_new_group_training_page') }}" class="hover:text-[#007BFF]">Izveidot jaunu grupu nodarbības veidu</a>
     <a href="{{ route('our_memberships') }}" class="hover:text-[#007BFF]">Abonementu veidi</a>
+    <a href="{{ route('create_new_membership_page') }}" class="hover:text-[#007BFF]">Izveidot jaunu abonementa veidu</a>
     <a href="{{ route('group_trainings_calendar') }}" class="hover:text-[#007BFF]">Grupu nodarbību kalendārs</a>
     <a href="{{ route('gym_statistics') }}" class="hover:text-[#007BFF]">Sporta zāļu statistika</a>
 </nav>

@@ -178,6 +178,12 @@ Route::middleware(['auth:admin'])->group(function () {
     // Edit gym (action
     Route::post('/edit_gym', [GymController::class, 'edit_gym'])->name('edit_gym');
 
+    // Create new membership page
+    Route::get('/create_new_membership', [MembershipController::class, 'create_new_membership_page'])->name('create_new_membership_page');
+
+    // Create new membership (action)
+    Route::post('/create_new_membership', [MembershipController::class, 'create_new_membership'])->name('create_new_membership');
+
     // Admin's logout
     Route::post('/logout_admin', function () {
         Auth::guard('admin')->logout();
