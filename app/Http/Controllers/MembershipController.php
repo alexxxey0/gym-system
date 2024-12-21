@@ -244,4 +244,44 @@ class MembershipController extends Controller {
 
         return redirect()->route('our_memberships')->with('message', 'Jauns abonementa veids veiksmīgi izveidots!');
     }
+
+
+    public function edit_membership_page(Request $request) {
+        $membership = Membership::where('membership_id', $request->membership_id)->first();
+
+        return view('admin.edit_membership', [
+            'membership' => $membership
+        ]);
+    }
+
+
+    public function edit_membership(Request $request) {
+        $entry_times = array();
+        $entry_times['entry_from_workdays'] = $request->entry_from_workdays;
+        $entry_times['entry_until_workdays'] = $request->entry_until_workdays;
+        $entry_times['entry_from_weekends'] = $request->entry_from_weekends;
+        $entry_times['entry_until_weekends'] = $request->entry_until_weekends;
+        $request['entry_times'] = $entry_times;
+
+        $form_fields = $request->validate([
+            'membership_name' => ['required', 'max:30', 'unique:memberships,membership_name,' . $request->membership_id . ',membership_id'],
+            'price' => ['required', 'numeric', 'decimal:0,2', 'min:0.01', 'max:100'],
+            'group_trainings_included' => ['required'],
+            'entry_times' => [new valid_membership_entry_times]
+        ]);
+
+
+        $membership = Membership::where('membership_id', $request->membership_id)->first();
+        $membership->update([
+            'membership_name' => $form_fields['membership_name'],
+            'price' => $form_fields['price'],
+            'group_trainings_included' => $form_fields['group_trainings_included'] === 'yes' ? true : false,
+            'entry_from_workdays' => $entry_times['entry_from_workdays'],
+            'entry_until_workdays' => $entry_times['entry_until_workdays'],
+            'entry_from_weekends' => $entry_times['entry_from_weekends'],
+            'entry_until_weekends' => $entry_times['entry_until_weekends']
+        ]);
+
+        return redirect()->route('our_memberships')->with('message', 'Abonementa informācija veiksmīgi rediģēta!');
+    }
 }

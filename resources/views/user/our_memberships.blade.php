@@ -22,6 +22,10 @@
                     <li><span class='font-bold'>Ieeja darba dienās:</span> {{substr($membership->entry_from_workdays, 0, 5)}}-{{substr($membership->entry_until_workdays, 0, 5)}}</li>
                     <li><span class='font-bold'>Ieeja brīvdienās:</span> {{substr($membership->entry_from_weekends, 0, 5)}}-{{substr($membership->entry_until_weekends, 0, 5)}}</li>
                 </ul>
+
+                @if (Auth::user()->role === 'admin')
+                    <x-main_link class='block w-5/12 mt-4' href="{{ route('edit_membership_page', ['membership_id' => $membership->membership_id]) }}">Rediģēt abonementa informāciju</x-main_link>
+                @endif
             </div>
         @endforeach
     </div>

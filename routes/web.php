@@ -184,6 +184,12 @@ Route::middleware(['auth:admin'])->group(function () {
     // Create new membership (action)
     Route::post('/create_new_membership', [MembershipController::class, 'create_new_membership'])->name('create_new_membership');
 
+    // Edit membership page
+    Route::get('/edit_membership/{membership_id}', [MembershipController::class, 'edit_membership_page'])->name('edit_membership_page');
+
+    // Edit membership (action)
+    Route::post('/edit_membership', [MembershipController::class, 'edit_membership'])->name('edit_membership');
+
     // Admin's logout
     Route::post('/logout_admin', function () {
         Auth::guard('admin')->logout();
